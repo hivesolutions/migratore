@@ -7,7 +7,7 @@ def build(db):
     db = migratore.Migratore.get_db()
     table = db.create_table("users")
     table.add_column("username", type = "text")
-    
+
 def cleanup(db):
     db = migratore.Migratore.get_db()
     table = db.get_table("users")
@@ -40,8 +40,8 @@ if __name__ == "__main__":
         select(db)
     finally:
         db.close()
-    
-    
-    
+
+
+
     # @todo se tiver bulk operations por agulam informacao de progresso
     # e por isso com o \n

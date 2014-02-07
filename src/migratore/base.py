@@ -97,7 +97,7 @@ class Database(object):
         # debugs some information to the standard output this
         # may be useful for debugging purposes
         self._debug(query, title = self.engine)
-        
+
         # creates a new cursor using the current connection
         # this cursor is going to be used for the execution
         cursor = self.connection.cursor()
@@ -153,7 +153,7 @@ class Database(object):
 
     def exists_table(self, name):
         raise RuntimeError("Not implemented")
-    
+
     def _debug(self, message, title = None):
         is_debug = self.config.get("debug", True)
         if not is_debug: return
@@ -207,7 +207,7 @@ class MysqlDatabase(Database):
 
     # @todo se tiver bulk operations por agulam informacao de progresso
     # e por isso com o \n
-    
+
     def __init__(self, *args, **kwargs):
         Database.__init__(self, *args, **kwargs)
         self.engine = "mysql"
