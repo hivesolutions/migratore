@@ -135,7 +135,7 @@ class Database(object):
         return result
 
     def open(self):
-        pass
+        self.ensure_system()
 
     def close(self):
         self.connection.commit()
@@ -145,6 +145,23 @@ class Database(object):
 
     def commit(self):
         self.connection.commit()
+
+    def ensure_system(self):
+        exists = self.exists_table("migratore")
+        if exists: return
+        self.create_system()
+
+    def create_system(self):
+        table = self.create_table("migratore")
+        table.add_column("uuid", type = "string", index = True)
+        table.add_column("timestamp", type = "integer", index = True)
+        table.add_column("name", type = "string", index = True)
+        table.add_column("description", type = "text")
+        table.add_column("operator", type = "text")
+        table.add_column("start", type = "integer", index = True)
+        table.add_column("end", type = "integer", index = True)
+        table.add_column("start_s", type = "string")
+        table.add_column("end_s", type = "string")
 
     def create_table(self, name):
         id_name = self.config["id_name"]
@@ -161,10 +178,10 @@ class Database(object):
         return Table(self, name)
 
     def get_table(self, name):
-        self.ensure_table(name)
+        self.assert_table(name)
         return Table(self, name)
 
-    def ensure_table(self, name):
+    def assert_table(self, name):
         exists = self.exists_table(name)
         if not exists: raise RuntimeError("Table '%s' does not exist" % name)
 
@@ -296,7 +313,7 @@ class Table(object):
     def clear(self):
         return self.delete()
 
-    def add_column(self, name, type = "integer"):
+    def add_column(self, name, type = "integer", index = False):
         buffer = self.owner._buffer()
         buffer.write("alter table ")
         buffer.write(self.name)

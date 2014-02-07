@@ -39,6 +39,7 @@ if __name__ == "__main__":
     finally:
         db.close()
 
+    #@todo tenho de implementar os indexex no add column
 
     # @todo tenho de criar a tabela migrations se nao tiver
 
