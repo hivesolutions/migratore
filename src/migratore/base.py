@@ -180,11 +180,12 @@ class Database(object):
         buffer.write_type(id_type)
         buffer.write(")")
         buffer.execute()
-        return Table(self, name)
+        return Table(self, name, id_name)
 
     def get_table(self, name):
+        id_name = self.config["id_name"]
         self.assert_table(name)
-        return Table(self, name)
+        return Table(self, name, id_name)
 
     def assert_table(self, name):
         exists = self.exists_table(name)
@@ -246,9 +247,10 @@ class Database(object):
 
 class Table(object):
 
-    def __init__(self, owner, name):
+    def __init__(self, owner, name, identifier):
         self.owner = owner
         self.name = name
+        self.identifier = identifier
 
     def insert(self, **kwargs):
         into = self._into(kwargs)
@@ -314,10 +316,11 @@ class Table(object):
             range = (index, index + ITER_SIZE)
             results = self.select(
                 where = where,
-                range = range
+                range = range,
                 **kwargs
             )
             for result in results: callable(result)
+            index += ITER_SIZE
 
     def get(self, *args, **kwargs):
         return self.select(*args, **kwargs)[0]
@@ -348,6 +351,14 @@ class Table(object):
         buffer.write_type(type)
         buffer.execute()
 
+    def remove_column(self, name, index = False):
+        buffer = self.owner._buffer()
+        buffer.write("alter table ")
+        buffer.write(self.name)
+        buffer.write(" drop column ")
+        buffer.write(name)
+        buffer.execute()
+
     def _pack(self, names, values):
         names_t = type(names)
         multiple = names_t in SEQUENCE_TYPES
@@ -355,7 +366,8 @@ class Table(object):
         result = []
 
         for value in values:
-            value_m = dict(zip(names, value)) if multiple else value[0]
+            _zip = zip(names, value)
+            value_m = Result(self, _zip) if multiple else value[0]
             result.append(value_m)
 
         return tuple(result)
@@ -416,3 +428,17 @@ class Table(object):
 
     def _escape(self, value):
         return self.owner._
+
+class Result(dict):
+
+    def __init__(self, owner, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+        self.owner = owner
+        self.identifier = owner.identifier
+
+    def update(self, **kwargs):
+        value = self[self.identifier]
+        _kwargs = {
+            self.identifier : value
+        }
+        self.owner.update(kwargs, **_kwargs)
