@@ -162,6 +162,7 @@ class Database(object):
         table.add_column("timestamp", type = "integer", index = True)
         table.add_column("name", type = "string", index = True)
         table.add_column("description", type = "text")
+        table.add_column("result", type = "string", index = True)
         table.add_column("operator", type = "text")
         table.add_column("start", type = "integer", index = True)
         table.add_column("end", type = "integer", index = True)
