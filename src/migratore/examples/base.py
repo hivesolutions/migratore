@@ -4,12 +4,10 @@
 import migratore
 
 def build(db):
-    db = migratore.Migratore.get_db()
     table = db.create_table("users")
     table.add_column("username", type = "text")
 
 def cleanup(db):
-    db = migratore.Migratore.get_db()
     table = db.get_table("users")
     table.clear()
 

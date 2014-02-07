@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import types
 import StringIO
 
@@ -17,7 +18,8 @@ VALID_TYPES = dict(
     PORT = int,
     USERNAME = str,
     PASSWORD = str,
-    DB = str
+    DB = str,
+    DEBUG = int
 )
 """ The dictionary defining the names and the expected data types
 for the various environment variables accepted by the migratore
@@ -55,8 +57,10 @@ class Migratore(object):
     def get_database(cls, *args, **kwargs):
         cls._environ(args, kwargs)
         engine = kwargs.get("engine", "mysql")
+        debug = kwargs.get("debug", False)
         method = getattr(cls, "_get_" + engine)
         database = method(*args, **kwargs)
+        database.debug = debug
         database.open()
         return database
 
@@ -87,9 +91,16 @@ class Migratore(object):
 
 class Database(object):
 
-    def __init__(self, connection, name, config = DEFAULT_CONFIG):
+    def __init__(
+        self,
+        connection,
+        name,
+        debug = False,
+        config = DEFAULT_CONFIG
+    ):
         self.connection = connection
         self.name = name
+        self.debug = debug
         self.config = config
         self.engine = "undefined"
         self.types_map = dict(SQL_TYPES_MAP)
@@ -160,10 +171,9 @@ class Database(object):
         raise RuntimeError("Not implemented")
 
     def _debug(self, message, title = None):
-        is_debug = self.config.get("debug", True)
-        if not is_debug: return
-        if title: print "[%s] %s" % (title, message)
-        else: print message
+        if not self.debug: return
+        if title: print >> sys.stderr, "[%s] %s" % (title, message)
+        else: print >> sys.stderr, message
 
     def _apply_types(self):
         pass
