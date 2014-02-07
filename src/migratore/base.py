@@ -9,6 +9,8 @@ SEQUENCE_TYPES = (
     types.ListType,
     types.TupleType
 )
+""" The tuple defining the various data types that are considered
+to be representing sequences under the python language """
 
 VALID_TYPES = dict(
     HOST = str,
@@ -44,6 +46,10 @@ fallback value for the creation of all the database object, this
 will influence the way some operations will be done """
 
 class Migratore(object):
+
+    @classmethod
+    def get_db(cls, *args, **kwargs):
+        return cls.get_database()
 
     @classmethod
     def get_database(cls, *args, **kwargs):
@@ -83,21 +89,18 @@ class Database(object):
         self.connection = connection
         self.name = name
         self.config = config
+        self.engine = "undefined"
         self.types_map = dict(SQL_TYPES_MAP)
         self._apply_types()
 
     def execute(self, query, fetch = True):
+        # debugs some information to the standard output this
+        # may be useful for debugging purposes
+        self._debug(query, title = self.engine)
+        
         # creates a new cursor using the current connection
         # this cursor is going to be used for the execution
         cursor = self.connection.cursor()
-
-
-        #@todo por isto se tiver em modo debug DEBUG=1
-
-        print query
-
-
-
 
         # executes the query using the current cursor
         # then closes the cursor avoid the leak of
@@ -141,11 +144,21 @@ class Database(object):
         return Table(self, name)
 
     def get_table(self, name):
-        self.exists_table(name)
+        self.ensure_table(name)
         return Table(self, name)
+
+    def ensure_table(self, name):
+        exists = self.exists_table(name)
+        if not exists: raise RuntimeError("Table '%s' does not exist" % name)
 
     def exists_table(self, name):
         raise RuntimeError("Not implemented")
+    
+    def _debug(self, message, title = None):
+        is_debug = self.config.get("debug", True)
+        if not is_debug: return
+        if title: print "[%s] %s" % (title, message)
+        else: print message
 
     def _apply_types(self):
         pass
@@ -194,6 +207,10 @@ class MysqlDatabase(Database):
 
     # @todo se tiver bulk operations por agulam informacao de progresso
     # e por isso com o \n
+    
+    def __init__(self, *args, **kwargs):
+        Database.__init__(self, *args, **kwargs)
+        self.engine = "mysql"
 
     def exists_table(self, name):
         buffer = self._buffer()
@@ -243,6 +260,19 @@ class Table(object):
         results = self._pack(fnames, results)
         return results
 
+    def update(self, fvalues, where = None, **kwargs):
+        values = self._values(fvalues)
+        where = where or self._where(kwargs)
+        buffer = self.owner._buffer()
+        buffer.write("update ")
+        buffer.write(self.name)
+        buffer.write(" set ")
+        buffer.write(values)
+        if where:
+            buffer.write(" where ")
+            buffer.write(where)
+        buffer.execute()
+
     def delete(self, where = None, **kwargs):
         where = where or self._where(kwargs)
         buffer = self.owner._buffer()
@@ -264,6 +294,12 @@ class Table(object):
         results = buffer.execute(fetch = True)
         count = results[0][0]
         return count
+
+    def drop(self):
+        buffer = self.owner._buffer()
+        buffer.write("drop table ")
+        buffer.write(self.name)
+        buffer.execute()
 
     def get(self, *args, **kwargs):
         return self.select(*args, **kwargs)[0]
@@ -297,6 +333,20 @@ class Table(object):
         args_t = type(args)
         if not args_t in SEQUENCE_TYPES: return args
         return ", ".join(args)
+
+    def _values(self, kwargs):
+        buffer = self.owner._buffer()
+
+        is_first = True
+
+        for key, value in kwargs.iteritems():
+            if is_first: is_first = False
+            else: buffer.write(", ")
+            buffer.write(key)
+            buffer.write(" = ")
+            buffer.write_value(value)
+
+        return buffer.join()
 
     def _into(self, kwargs):
         buffer = self.owner._buffer()
@@ -335,22 +385,3 @@ class Table(object):
 
     def _escape(self, value):
         return self.owner._
-
-if __name__ == "__main__":
-    database = Migratore.get_database()
-    #table = database.create_table("users")
-    table = database.get_table("users")
-    #table.add_column("username", type = "text")
-    #print table.select("username", where = "username='tobias'")
-
-    table.clear()
-    for i in range(120):
-        username = "tobias" + str(i)
-        table.insert(username = username, object_id = i)
-
-    print table.count()
-
-    #print table.select(("username", "object_id"), username = "tobias106")
-    #print table.get("object_id", username = "tobias106", object_id = 106)
-
-    database.close()
