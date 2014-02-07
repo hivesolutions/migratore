@@ -6,6 +6,10 @@ import sys
 import types
 import StringIO
 
+ITER_SIZE = 10
+""" The size to be used as reference for each iteration meaning
+that each iteration of data retrieval will have this size """
+
 SEQUENCE_TYPES = (
     types.ListType,
     types.TupleType
@@ -153,6 +157,7 @@ class Database(object):
 
     def create_system(self):
         table = self.create_table("migratore")
+        table.add_column("version", type = "string", index = True)
         table.add_column("uuid", type = "string", index = True)
         table.add_column("timestamp", type = "integer", index = True)
         table.add_column("name", type = "string", index = True)
@@ -186,6 +191,9 @@ class Database(object):
         if not exists: raise RuntimeError("Table '%s' does not exist" % name)
 
     def exists_table(self, name):
+        raise RuntimeError("Not implemented")
+
+    def names_table(self, name):
         raise RuntimeError("Not implemented")
 
     def _debug(self, message, title = None):
@@ -251,52 +259,41 @@ class Table(object):
         buffer.write(into)
         buffer.execute()
 
-    def select(self, fnames, where = None, **kwargs):
+    def select(self, fnames = None, where = None, range = None, **kwargs):
+        fnames = fnames or self.owner.names_table(self.name)
         names = self._names(fnames)
-        where = where or self._where(kwargs)
         buffer = self.owner._buffer()
         buffer.write("select ")
         buffer.write(names)
         buffer.write(" from ")
         buffer.write(self.name)
-        if where:
-            buffer.write(" where ")
-            buffer.write(where)
+        self.tail(buffer, where = where, range = range, **kwargs)
         results = buffer.execute(fetch = True)
         results = self._pack(fnames, results)
         return results
 
     def update(self, fvalues, where = None, **kwargs):
         values = self._values(fvalues)
-        where = where or self._where(kwargs)
         buffer = self.owner._buffer()
         buffer.write("update ")
         buffer.write(self.name)
         buffer.write(" set ")
         buffer.write(values)
-        if where:
-            buffer.write(" where ")
-            buffer.write(where)
+        self.tail(buffer, where = where, **kwargs)
         buffer.execute()
 
     def delete(self, where = None, **kwargs):
-        where = where or self._where(kwargs)
         buffer = self.owner._buffer()
         buffer.write("delete from ")
         buffer.write(self.name)
-        if where:
-            buffer.write(" where ")
-            buffer.write(where)
+        self.tail(buffer, where, **kwargs)
         buffer.execute()
 
-    def count(self, where = None, **kwargs):
-        where = where or self._where(kwargs)
+    def count(self, where = None, range = None, **kwargs):
         buffer = self.owner._buffer()
         buffer.write("select count(1) from ")
         buffer.write(self.name)
-        if where:
-            buffer.write(" where ")
-            buffer.write(where)
+        self.tail(buffer, where = where, range = range, **kwargs)
         results = buffer.execute(fetch = True)
         count = results[0][0]
         return count
@@ -307,11 +304,39 @@ class Table(object):
         buffer.write(self.name)
         buffer.execute()
 
+    def apply(self, callable, where = None, **kwargs):
+        count = self.count(where = where, **kwargs)
+
+        index = 0
+
+        while True:
+            if index >= count: break
+            range = (index, index + ITER_SIZE)
+            results = self.select(
+                where = where,
+                range = range
+                **kwargs
+            )
+            for result in results: callable(result)
+
     def get(self, *args, **kwargs):
         return self.select(*args, **kwargs)[0]
 
     def clear(self):
         return self.delete()
+
+    def tail(self, buffer, where = None, range = None, **kwargs):
+        where = where or self._where(kwargs)
+        if where:
+            buffer.write(" where ")
+            buffer.write(where)
+        if range:
+            offset = str(range[0])
+            limit = str(range[1])
+            buffer.write(" limit ")
+            buffer.write(limit)
+            buffer.write(" offset ")
+            buffer.write(offset)
 
     def add_column(self, name, type = "integer", index = False):
         buffer = self.owner._buffer()
