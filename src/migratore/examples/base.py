@@ -38,12 +38,22 @@ class TestMigration(migratore.Migration):
 
     def run(self, db):
         table = db.get_table("users")
+
+        table.remove_column("description")
         table.add_column("description", type = "text")
 
-        #@todo ainda tenho de alterar o schema do migratore
+        def generator(value):
+            username = value["username"]
+            description = "description-" + username
+            value.update(description = description)
+
+        table.apply(generator)
+
+        # @todo ainda tenho de alterar o schema do migratore
         # @todo tenho de fazer as pre validacoes do migratore
         # @todo so aplica se for mesmo necessario
         # apply all que recebe uma string (task)
+        # @todo ainda faltam os indices
 
 if __name__ == "__main__":
     migration = TestMigration()
