@@ -2,7 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import os
+import types
 import StringIO
+
+SEQUENCE_TYPES = (
+    types.ListType,
+    types.TupleType
+)
 
 VALID_TYPES = dict(
     HOST = str,
@@ -71,12 +77,6 @@ class Migratore(object):
             key_l = key.lower()
             kwargs[key_l] = _type(value)
 
-class Connection(object):
-
-    def __init__(self, conn, name):
-        self.conn = conn
-        self.name = name
-
 class Database(object):
 
     def __init__(self, connection, name, config = DEFAULT_CONFIG):
@@ -90,6 +90,14 @@ class Database(object):
         # creates a new cursor using the current connection
         # this cursor is going to be used for the execution
         cursor = self.connection.cursor()
+
+
+        #@todo por isto se tiver em modo debug DEBUG=1
+
+        print query
+
+
+
 
         # executes the query using the current cursor
         # then closes the cursor avoid the leak of
@@ -108,6 +116,15 @@ class Database(object):
         try: result = cursor.fetchall()
         finally: cursor.close()
         return result
+
+    def close(self):
+        self.connection.commit()
+
+    def rollback (self):
+        self.connection.rollback ()
+
+    def commit(self):
+        self.connection.commit()
 
     def create_table(self, name):
         id_name = self.config["id_name"]
@@ -140,6 +157,10 @@ class Database(object):
             type_s = self._type(type)
             buffer.write(type_s)
 
+        def write_value(value):
+            value_s = self._escape(value)
+            buffer.write(value_s)
+
         def join():
             return buffer.getvalue()
 
@@ -148,6 +169,7 @@ class Database(object):
             return self.execute(query, fetch = fetch)
 
         buffer.write_type = write_type
+        buffer.write_value = write_value
         buffer.join = join
         buffer.execute = execute
         return buffer
@@ -155,12 +177,23 @@ class Database(object):
     def _type(self, type):
         return self.types_map[type]
 
+    def _escape(self, value):
+        value_t = type(value)
+
+        if not value_t in types.StringTypes: return str(value)
+
+        if value_t == types.UnicodeType: value.encode("utf-8")
+
+        value = value.replace("'", "''")
+        value = value.replace("\\", "\\\\")
+        value = value.replace("\"", "\"\"")
+
+        return "'" + value + "'"
+
 class MysqlDatabase(Database):
 
     # @todo se tiver bulk operations por agulam informacao de progresso
     # e por isso com o \n
-
-
 
     def exists_table(self, name):
         buffer = self._buffer()
@@ -186,6 +219,60 @@ class Table(object):
         self.owner = owner
         self.name = name
 
+    def insert(self, **kwargs):
+        into = self._into(kwargs)
+        buffer = self.owner._buffer()
+        buffer.write("insert into ")
+        buffer.write(self.name)
+        buffer.write(" ")
+        buffer.write(into)
+        buffer.execute()
+
+    def select(self, fnames, where = None, **kwargs):
+        names = self._names(fnames)
+        where = where or self._where(kwargs)
+        buffer = self.owner._buffer()
+        buffer.write("select ")
+        buffer.write(names)
+        buffer.write(" from ")
+        buffer.write(self.name)
+        if where:
+            buffer.write(" where ")
+            buffer.write(where)
+        results = buffer.execute(fetch = True)
+        results = self._pack(fnames, results)
+        return results
+
+    def delete(self, where = None, **kwargs):
+        where = where or self._where(kwargs)
+        buffer = self.owner._buffer()
+        buffer.write("delete ")
+        buffer.write(" from ")
+        buffer.write(self.name)
+        if where:
+            buffer.write(" where ")
+            buffer.write(where)
+        buffer.execute()
+
+    def count(self, where = None, **kwargs):
+        where = where or self._where(kwargs)
+        buffer = self.owner._buffer()
+        buffer.write("select count(1) ")
+        buffer.write(" from ")
+        buffer.write(self.name)
+        if where:
+            buffer.write(" where ")
+            buffer.write(where)
+        results = buffer.execute(fetch = True)
+        count = results[0][0]
+        return count
+
+    def get(self, *args, **kwargs):
+        return self.select(*args, **kwargs)[0]
+
+    def clear(self):
+        return self.delete()
+
     def add_column(self, name, type = "integer"):
         buffer = self.owner._buffer()
         buffer.write("alter table ")
@@ -196,8 +283,76 @@ class Table(object):
         buffer.write_type(type)
         buffer.execute()
 
+    def _pack(self, names, values):
+        names_t = type(names)
+        multiple = names_t in SEQUENCE_TYPES
+
+        result = []
+
+        for value in values:
+            value_m = dict(zip(names, value)) if multiple else value[0]
+            result.append(value_m)
+
+        return tuple(result)
+
+    def _names(self, args):
+        args_t = type(args)
+        if not args_t in SEQUENCE_TYPES: return args
+        return ", ".join(args)
+
+    def _into(self, kwargs):
+        buffer = self.owner._buffer()
+
+        is_first = True
+
+        names = kwargs.keys()
+        names_s = ", ".join(names)
+
+        buffer.write("(")
+        buffer.write(names_s)
+        buffer.write(") values(")
+
+        for value in kwargs.values():
+            if is_first: is_first = False
+            else: buffer.write(", ")
+            buffer.write_value(value)
+
+        buffer.write(')')
+
+        return buffer.join()
+
+    def _where(self, kwargs):
+        buffer = self.owner._buffer()
+
+        is_first = True
+
+        for key, value in kwargs.iteritems():
+            if is_first: is_first = False
+            else: buffer.write(" and ")
+            buffer.write(key)
+            buffer.write(" = ")
+            buffer.write_value(value)
+
+        return buffer.join()
+
+    def _escape(self, value):
+        return self.owner._
+
 if __name__ == "__main__":
     database = Migratore.get_database()
-    table = database.create_table("users")
-    #table = database.get_table("users")
-    table.add_column("username", type = "text")
+    #table = database.create_table("users")
+    table = database.get_table("users")
+    #table.add_column("username", type = "text")
+    #print table.select("username", where = "username='tobias'")
+
+    table.clear()
+    for i in range(120):
+        username = "tobias" + str(i)
+        table.insert(username = username, object_id = i)
+
+    print table.count()
+
+    #print table.select(("username", "object_id"), username = "tobias106")
+    #print table.get("object_id", username = "tobias106", object_id = 106)
+
+    database.close()
