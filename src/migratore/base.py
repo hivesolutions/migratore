@@ -66,6 +66,7 @@ class Migratore(object):
 
     @classmethod
     def _get_mysql(cls, *args, **kwargs):
+        import mysql
         import MySQLdb
         host = kwargs.get("host", "localhost")
         port = kwargs.get("port", 3306)
@@ -79,7 +80,7 @@ class Migratore(object):
             passwd = password,
             db = name
         )
-        return MysqlDatabase(connection, name)
+        return mysql.MysqlDatabase(connection, name)
 
     @classmethod
     def _environ(cls, args, kwargs):
@@ -217,41 +218,6 @@ class Database(object):
         value = value.replace("\"", "\"\"")
 
         return "'" + value + "'"
-
-class MysqlDatabase(Database):
-
-    # @todo se tiver bulk operations por agulam informacao de progresso
-    # e por isso com o \n
-
-    def __init__(self, *args, **kwargs):
-        Database.__init__(self, *args, **kwargs)
-        self.engine = "mysql"
-        self.isolation_level = "read committed"
-
-    def open(self):
-        Database.open(self)
-        buffer = self._buffer()
-        buffer.write("set session transaction isolation level ")
-        buffer.write(self.isolation_level)
-        buffer.execute()
-
-    def exists_table(self, name):
-        buffer = self._buffer()
-        buffer.write("select count(*) ")
-        buffer.write("from information_schema.tables where table_schema = '")
-        buffer.write(self.name)
-        buffer.write("' and table_name = '")
-        buffer.write(name)
-        buffer.write("'")
-        counts = buffer.execute(fetch = True)
-        exists = True if counts and counts[0][0] > 0 else False
-        return exists
-
-    def _apply_types(self):
-        Database._apply_types(self)
-        self.types_map["text"] = "longtext"
-        self.types_map["data"] = "longtext"
-        self.types_map["metadata"] = "longtext"
 
 class Table(object):
 

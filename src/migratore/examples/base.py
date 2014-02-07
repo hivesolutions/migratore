@@ -40,6 +40,8 @@ if __name__ == "__main__":
         db.close()
 
 
+    # @todo tenho de criar a tabela migrations se nao tiver
+
 
     # @todo se tiver bulk operations por agulam informacao de progresso
     # e por isso com o \n
