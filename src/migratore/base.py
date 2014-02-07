@@ -56,7 +56,9 @@ class Migratore(object):
         cls._environ(args, kwargs)
         engine = kwargs.get("engine", "mysql")
         method = getattr(cls, "_get_" + engine)
-        return method(*args, **kwargs)
+        database = method(*args, **kwargs)
+        database.open()
+        return database
 
     @classmethod
     def _get_mysql(cls, *args, **kwargs):
@@ -119,6 +121,9 @@ class Database(object):
         try: result = cursor.fetchall()
         finally: cursor.close()
         return result
+
+    def open(self):
+        pass
 
     def close(self):
         self.connection.commit()
@@ -211,6 +216,14 @@ class MysqlDatabase(Database):
     def __init__(self, *args, **kwargs):
         Database.__init__(self, *args, **kwargs)
         self.engine = "mysql"
+        self.isolation_level = "read committed"
+
+    def open(self):
+        Database.open(self)
+        buffer = self._buffer()
+        buffer.write("set session transaction isolation level ")
+        buffer.write(self.isolation_level)
+        buffer.execute()
 
     def exists_table(self, name):
         buffer = self._buffer()

@@ -32,8 +32,8 @@ def select(db):
 if __name__ == "__main__":
     db = migratore.Migratore.get_db()
     try:
-        #try: build(db)
-        #except: pass
+        try: build(db)
+        except: pass
         cleanup(db)
         data(db)
         update(db)
