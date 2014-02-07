@@ -33,6 +33,7 @@ class TestMigration(migratore.Migration):
         migratore.Migration.__init__(self)
         self.version = 1
         self.uuid = "e38376e1-c9ed-429b-a6f4-55b048c55d29"
+        self.timestamp = 1391804700
         self.name = "test"
         self.description = "adds the extra description column"
 
@@ -49,7 +50,7 @@ class TestMigration(migratore.Migration):
 
         table.apply(generator)
 
-        # @todo ainda tenho de alterar o schema do migratore
+        # @todo preciso do order by para saber a ultima migracao bem sucessida
         # @todo tenho de fazer as pre validacoes do migratore
         # @todo so aplica se for mesmo necessario
         # apply all que recebe uma string (task)
@@ -59,8 +60,10 @@ if __name__ == "__main__":
     migration = TestMigration()
     migration.start()
 
-
     #db = migratore.Migratore.get_db()
+    #table = db.get_table("migratore")
+    #print table.get()
+    
     #db.names_table("migratore")
     #try:
     #    try: build(db)
