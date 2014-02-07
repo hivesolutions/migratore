@@ -37,7 +37,7 @@ class Migration(object):
         end = time.time()
         start = int(start)
         end = int(end)
-        duration = end - start 
+        duration = end - start
 
         start_s = self._time_s(start)
         end_s = self._time_s(end)

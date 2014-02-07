@@ -63,7 +63,7 @@ if __name__ == "__main__":
     #db = migratore.Migratore.get_db()
     #table = db.get_table("migratore")
     #print table.get()
-    
+
     #db.names_table("migratore")
     #try:
     #    try: build(db)

@@ -186,6 +186,11 @@ class Database(object):
         buffer.execute()
         return Table(self, name, id_name)
 
+    def drop_table(self, name):
+        buffer.write("drop table ")
+        buffer.write(name)
+        buffer.execute()
+
     def get_table(self, name):
         id_name = self.config["id_name"]
         self.assert_table(name)
