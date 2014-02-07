@@ -29,6 +29,18 @@ class MysqlDatabase(base.Database):
         exists = True if counts and counts[0][0] > 0 else False
         return exists
 
+    def names_table(self, name):
+        buffer = self._buffer()
+        buffer.write("select column_name ")
+        buffer.write("from information_schema.columns where table_schema = '")
+        buffer.write(self.name)
+        buffer.write("' and table_name = '")
+        buffer.write(name)
+        buffer.write("'")
+        names = buffer.execute(fetch = True)
+        names = [value[0] for value in names]
+        return names
+
     def _apply_types(self):
         base.Database._apply_types(self)
         self.types_map["text"] = "longtext"
