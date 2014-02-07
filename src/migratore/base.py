@@ -246,8 +246,7 @@ class Table(object):
     def delete(self, where = None, **kwargs):
         where = where or self._where(kwargs)
         buffer = self.owner._buffer()
-        buffer.write("delete ")
-        buffer.write(" from ")
+        buffer.write("delete from ")
         buffer.write(self.name)
         if where:
             buffer.write(" where ")
@@ -257,8 +256,7 @@ class Table(object):
     def count(self, where = None, **kwargs):
         where = where or self._where(kwargs)
         buffer = self.owner._buffer()
-        buffer.write("select count(1) ")
-        buffer.write(" from ")
+        buffer.write("select count(1) from ")
         buffer.write(self.name)
         if where:
             buffer.write(" where ")
