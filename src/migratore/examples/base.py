@@ -37,17 +37,23 @@ class TestMigration(migratore.Migration):
         self.description = "adds the extra description column"
 
     def run(self, db):
+        migratore.Migration.run(self, db)
+
         table = db.get_table("users")
+
+        self.begin("migrating schema")
 
         table.remove_column("description")
         table.add_column("description", type = "text")
+
+        self.end("migrating schema")
 
         def generator(value):
             username = value["username"]
             description = "description-" + username
             value.update(description = description)
 
-        table.apply(generator)
+        table.apply(generator, title = "updating descriptions")
 
         # @todo preciso do order by para saber a ultima migracao bem sucessida
         # @todo tenho de fazer as pre validacoes do migratore

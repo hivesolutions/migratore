@@ -7,7 +7,7 @@ import traceback
 
 import base
 
-class Migration(object):
+class Migration(base.Console):
 
     def __init__(self):
         self.uuid = None
@@ -19,6 +19,12 @@ class Migration(object):
         db = base.Migratore.get_db()
         try: self._start(db, operator)
         finally: db.close()
+
+    def run(self, db):
+        self.echo("Running migration '%s'" % self.uuid)
+
+    def cleanup(self, db):
+        self.echo("Cleaning up...")
 
     def _start(self, db, operator):
         result = "success"
@@ -33,7 +39,9 @@ class Migration(object):
             lines = "\n".join(lines)
             result = "error"
             error = str(exception)
+            self.echo(error)
         else: db.commit()
+        finally: self.cleanup(db)
 
         end = time.time()
         start = int(start)
@@ -60,9 +68,6 @@ class Migration(object):
             end_s = end_s,
         )
         db.commit()
-
-    def run(self, db):
-        raise RuntimeError("Not implemented")
 
     def _time_s(self, timestamp):
         date_time = datetime.datetime.utcfromtimestamp(timestamp)

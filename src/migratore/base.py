@@ -69,6 +69,11 @@ class Migratore(object):
         return database
 
     @classmethod
+    def echo(cls, message, nl = True, file = sys.stdout):
+        file.write(message)
+        if nl: file.write("\n")
+
+    @classmethod
     def _get_mysql(cls, *args, **kwargs):
         import mysql
         import MySQLdb
@@ -94,7 +99,30 @@ class Migratore(object):
             key_l = key.lower()
             kwargs[key_l] = _type(value)
 
-class Database(object):
+class Console(object):
+
+    def echo(self, *args, **kwargs):
+        Migratore.echo(*args, **kwargs)
+
+    def begin(self, message):
+        message = self.title(message)
+        self.echo("    %s...\r" % message, False)
+
+    def end(self, message):
+        message = self.title(message)
+        self.echo("  * %s... done     " % message)
+
+    def percent(self, message):
+        message = self.title(message)
+        self.echo("    %s\r" % message, False)
+
+    def title(self, value):
+        if not value: return value
+        values = value.split(" ")
+        values[0] = values[0].title()
+        return " ".join(values)
+
+class Database(Console):
 
     def __init__(
         self,
@@ -208,10 +236,6 @@ class Database(object):
     def names_table(self, name):
         raise RuntimeError("Not implemented")
 
-    def echo(self, message, title = None):
-        message = self._format(message, title)
-        print message
-
     def _debug(self, message, title = None):
         if not self.debug: return
         message = self._format(message, title)
@@ -265,7 +289,7 @@ class Database(object):
 
         return "'" + value + "'"
 
-class Table(object):
+class Table(Console):
 
     def __init__(self, owner, name, identifier):
         self.owner = owner
@@ -326,7 +350,7 @@ class Table(object):
         buffer.write(self.name)
         buffer.execute()
 
-    def apply(self, callable, where = None, **kwargs):
+    def apply(self, callable, title = None, where = None, **kwargs):
         count = self.count(where = where, **kwargs)
 
         index = 0
@@ -341,6 +365,17 @@ class Table(object):
             )
             for result in results: callable(result)
             index += ITER_SIZE
+
+            if not title: continue
+
+            ratio = float(index) / float(count)
+            pecentage = int(ratio * 100)
+
+            self.percent("%s... [%d/100]" % (title, pecentage))
+
+        if not title: return
+
+        self.end("%s" % title)
 
     def get(self, *args, **kwargs):
         return self.select(*args, **kwargs)[0]
