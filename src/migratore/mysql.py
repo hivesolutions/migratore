@@ -3,7 +3,7 @@
 
 import base
 
-class MysqlDatabase(base.Database):
+class MySQLDatabase(base.Database):
 
     def __init__(self, *args, **kwargs):
         base.Database.__init__(self, *args, **kwargs)
@@ -16,6 +16,9 @@ class MysqlDatabase(base.Database):
         buffer.write("set session transaction isolation level ")
         buffer.write(self.isolation_level)
         buffer.execute()
+
+    def table(self, *args, **kwargs):
+        return MySQLTable(*args, **kwargs)
 
     def exists_table(self, name):
         buffer = self._buffer()
@@ -46,3 +49,27 @@ class MysqlDatabase(base.Database):
         self.types_map["text"] = "longtext"
         self.types_map["data"] = "longtext"
         self.types_map["metadata"] = "longtext"
+
+class MySQLTable(base.Table):
+
+    def create_index(self, name, type = "hash"):
+        index = "%s_%s_%s" % (self.name, name, type)
+        buffer = self.owner._buffer()
+        buffer.write("create index ")
+        buffer.write(index)
+        buffer.write(" on ")
+        buffer.write(self.name)
+        buffer.write("(")
+        buffer.write(name)
+        buffer.write(") using ")
+        buffer.write(type)
+        buffer.execute()
+
+    def drop_index(self, name):
+        index = "%s_%s_%s" % (self.name, name, type)
+        buffer = self.owner._buffer()
+        buffer.write("drop index ")
+        buffer.write(index)
+        buffer.write(" on ")
+        buffer.write(self.name)
+        buffer.execute()

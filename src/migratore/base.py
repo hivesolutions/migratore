@@ -84,7 +84,7 @@ class Migratore(object):
             passwd = password,
             db = name
         )
-        return mysql.MysqlDatabase(connection, name)
+        return mysql.MySQLDatabase(connection, name)
 
     @classmethod
     def _environ(cls, args, kwargs):
@@ -150,6 +150,9 @@ class Database(object):
     def commit(self):
         self.connection.commit()
 
+    def table(self, *args, **kwargs):
+        return Table(*args, **kwargs)
+
     def ensure_system(self):
         exists = self.exists_table("migratore")
         if exists: return
@@ -184,7 +187,7 @@ class Database(object):
         buffer.write_type(id_type)
         buffer.write(")")
         buffer.execute()
-        return Table(self, name, id_name)
+        return self.table(self, name, id_name)
 
     def drop_table(self, name):
         buffer.write("drop table ")
@@ -194,7 +197,7 @@ class Database(object):
     def get_table(self, name):
         id_name = self.config["id_name"]
         self.assert_table(name)
-        return Table(self, name, id_name)
+        return self.table(self, name, id_name)
 
     def assert_table(self, name):
         exists = self.exists_table(name)
@@ -359,6 +362,7 @@ class Table(object):
         buffer.write(" ")
         buffer.write_type(type)
         buffer.execute()
+        if index: self.index_column(name)
 
     def remove_column(self, name, index = False):
         buffer = self.owner._buffer()
@@ -367,6 +371,16 @@ class Table(object):
         buffer.write(" drop column ")
         buffer.write(name)
         buffer.execute()
+
+    def index_column(self, name):
+        self.create_index(name, type = "hash")
+        self.create_index(name, type = "btree")
+
+    def create_index(self, name, type = "hash"):
+        pass
+
+    def drop_index(self, name):
+        pass
 
     def _pack(self, names, values):
         names_t = type(names)
