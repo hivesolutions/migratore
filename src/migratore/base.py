@@ -106,7 +106,7 @@ class Console(object):
 
     def begin(self, message):
         message = self.title(message)
-        self.echo("    %s...\r" % message, False)
+        self.echo("  * %s...\r" % message, False)
 
     def end(self, message):
         message = self.title(message)
@@ -114,7 +114,7 @@ class Console(object):
 
     def percent(self, message):
         message = self.title(message)
-        self.echo("    %s\r" % message, False)
+        self.echo("  * %s\r" % message, False)
 
     def title(self, value):
         if not value: return value
