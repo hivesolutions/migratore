@@ -246,7 +246,7 @@ class Database(object):
 
         if not value_t in types.StringTypes: return str(value)
 
-        if value_t == types.UnicodeType: value.encode("utf-8")
+        if value_t == types.UnicodeType: value = value.encode("utf-8")
 
         value = value.replace("'", "''")
         value = value.replace("\\", "\\\\")
