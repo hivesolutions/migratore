@@ -122,6 +122,32 @@ class Console(object):
         values[0] = values[0].title()
         return " ".join(values)
 
+    def is_tty(self):
+        """
+        Verifies if the current output/input methods are considered
+        to be compliant with the typical console strategy (tty).
+
+        This is important as it may condition the wat the console
+        output will be made (carriage return, colors, etc).
+
+        @rtype: bool
+        @return: If the current standard output/input methods are
+        compliant with tty standard.
+        """
+
+        if os.name == "nt": return self._is_tty_win()
+        else: return self._is_tty_unix()
+
+    def _is_tty_unix(self):
+        return sys.stdin.isatty()
+
+    def _is_tty_win(self):
+        import msvcrt
+        is_tty = sys.stdin.isatty()
+        fileno = sys.stdin.fileno()
+        mode_value = msvcrt.setmode(fileno, os.O_TEXT) #@UndefinedVariable
+        return is_tty and mode_value == 0x4000
+
 class Database(Console):
 
     def __init__(
