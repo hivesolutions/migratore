@@ -160,7 +160,6 @@ class Database(object):
 
     def create_system(self):
         table = self.create_table("migratore")
-        table.add_column("version", type = "string", index = True)
         table.add_column("uuid", type = "string", index = True)
         table.add_column("timestamp", type = "integer", index = True)
         table.add_column("name", type = "string", index = True)
@@ -208,7 +207,7 @@ class Database(object):
 
     def names_table(self, name):
         raise RuntimeError("Not implemented")
-    
+
     def echo(self, message, title = None):
         message = self._format(message, title)
         print message
@@ -217,7 +216,7 @@ class Database(object):
         if not self.debug: return
         message = self._format(message, title)
         print >> sys.stderr, message
-        
+
     def _format(self, message, title):
         if title: message = "[%s] %s" % (title, message)
         return message
@@ -255,6 +254,7 @@ class Database(object):
     def _escape(self, value):
         value_t = type(value)
 
+        if value_t == types.NoneType: return "null"
         if not value_t in types.StringTypes: return str(value)
 
         if value_t == types.UnicodeType: value = value.encode("utf-8")
@@ -333,7 +333,7 @@ class Table(object):
 
         while True:
             if index >= count: break
-            range = (index, index + ITER_SIZE)
+            range = (index, ITER_SIZE)
             results = self.select(
                 where = where,
                 range = range,
@@ -389,6 +389,9 @@ class Table(object):
 
     def drop_index(self, name):
         pass
+
+    def echo(self, *args, **kwargs):
+        self.owner.echo(*args, **kwargs)
 
     def _pack(self, names, values):
         names_t = type(names)
@@ -456,9 +459,6 @@ class Table(object):
             buffer.write_value(value)
 
         return buffer.join()
-
-    def _escape(self, value):
-        return self.owner._
 
 class Result(dict):
 
