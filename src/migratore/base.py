@@ -208,11 +208,19 @@ class Database(object):
 
     def names_table(self, name):
         raise RuntimeError("Not implemented")
+    
+    def echo(self, message, title = None):
+        message = self._format(message, title)
+        print message
 
     def _debug(self, message, title = None):
         if not self.debug: return
-        if title: print >> sys.stderr, "[%s] %s" % (title, message)
-        else: print >> sys.stderr, message
+        message = self._format(message, title)
+        print >> sys.stderr, message
+        
+    def _format(self, message, title):
+        if title: message = "[%s] %s" % (title, message)
+        return message
 
     def _apply_types(self):
         pass
