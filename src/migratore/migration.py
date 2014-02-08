@@ -10,7 +10,6 @@ import base
 class Migration(object):
 
     def __init__(self):
-        self.version = None
         self.uuid = None
         self.timestamp = None
         self.name = None
@@ -29,10 +28,12 @@ class Migration(object):
 
         try: self.run(db)
         except BaseException, exception:
+            db.rollback()
             lines = traceback.format_exc().splitlines()
             lines = "\n".join(lines)
             result = "error"
             error = str(exception)
+        else: db.commit()
 
         end = time.time()
         start = int(start)
@@ -44,7 +45,6 @@ class Migration(object):
 
         table = db.get_table("migratore")
         table.insert(
-            version = self.version,
             uuid = self.uuid,
             timestamp = self.timestamp,
             name = self.name,
@@ -59,6 +59,7 @@ class Migration(object):
             start_s = start_s,
             end_s = end_s,
         )
+        db.commit()
 
     def run(self, db):
         raise RuntimeError("Not implemented")
