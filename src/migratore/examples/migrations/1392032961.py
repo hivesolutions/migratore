@@ -22,10 +22,10 @@ class Migration(migratore.Migration):
         table.add_column("date", type = "integer")
         self.end("migrating schema")
 
-        def generator(value):
+        def task(value):
             _time = int(time.time())
             value.update(date = _time)
 
-        table.apply(generator, title = "creating dates")
+        table.apply(task, title = "creating dates")
 
 migration = Migration()

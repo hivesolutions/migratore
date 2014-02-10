@@ -17,19 +17,14 @@ class Migration(migratore.Migration):
         table = db.get_table("users")
 
         self.begin("migrating schema")
-
-        table.remove_column("description")
         table.add_column("description", type = "text")
-
         self.end("migrating schema")
 
-        def generator(value):
+        def task(value):
             username = value["username"]
             description = "description-" + username
             value.update(description = description)
 
-        table.apply(generator, title = "updating descriptions")
-
-        # @todo ainda faltam os indices
+        table.apply(task, title = "updating descriptions")
 
 migration = Migration()
