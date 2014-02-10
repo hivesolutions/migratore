@@ -1,4 +1,6 @@
 *.pyc
+*.egg
 
+/dist/
 /build/
 /src/migratore.egg-info/
