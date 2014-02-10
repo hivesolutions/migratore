@@ -20,6 +20,33 @@ class Migration(base.Console):
         return cmp(self.timestamp, value.timestamp)
 
     @classmethod
+    def list(cls):
+        db = base.Migratore.get_db()
+        try:
+            table = db.get_table("migratore")
+            executions = table.select(
+                order_by = (("object_id", "desc"),),
+                result = "success"
+            )
+            for execution in executions:
+                _uuid = execution["uuid"]
+                timestamp = execution["timestamp"]
+                description = execution["description"]
+                operator = execution["operator"]
+                start_s = execution["start_s"]
+                end_s = execution["end_s"]
+                timstamp_s = cls._time_s(timestamp)
+
+                base.Migratore.echo("UUID        -  %s" % _uuid)
+                base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
+                base.Migratore.echo("Description -  %s" % description)
+                base.Migratore.echo("Operator    -  %s" % operator)
+                base.Migratore.echo("Start time  -  %s" % start_s)
+                base.Migratore.echo("End time    -  %s" % end_s)
+                base.Migratore.echo("")
+        finally: db.close()
+
+    @classmethod
     def generate(cls, path = None):
         _uuid = uuid.uuid4()
         _uuid = str(_uuid)
@@ -49,6 +76,12 @@ class Migration(base.Console):
 
         return contents % args
 
+    @classmethod
+    def _time_s(cls, timestamp):
+        date_time = datetime.datetime.utcfromtimestamp(timestamp)
+        return date_time.strftime("%d %b %Y %H:%M:%S")
+
+
     def start(self, operator = "Administrator"):
         db = base.Migratore.get_db()
         try: self._start(db, operator)
@@ -61,6 +94,8 @@ class Migration(base.Console):
         self.echo("Cleaning up...")
 
     def _start(self, db, operator):
+        cls = self.__class__
+
         result = "success"
         error = None
         lines = None
@@ -82,8 +117,8 @@ class Migration(base.Console):
         end = int(end)
         duration = end - start
 
-        start_s = self._time_s(start)
-        end_s = self._time_s(end)
+        start_s = cls._time_s(start)
+        end_s = cls._time_s(end)
 
         table = db.get_table("migratore")
         table.insert(
@@ -101,7 +136,3 @@ class Migration(base.Console):
             end_s = end_s,
         )
         db.commit()
-
-    def _time_s(self, timestamp):
-        date_time = datetime.datetime.utcfromtimestamp(timestamp)
-        return date_time.strftime("%d %b %Y %H:%M:%S")
