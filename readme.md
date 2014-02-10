@@ -19,6 +19,7 @@ HOST=$(HOST) DB=$(DB_NAME) USERNAME=$(USERNAME) PASSWORD=$(PASSWORD) migratore.s
 * `version` - Prints a help message about the cli interface
 * `version` - Prints the current version of migratore
 * `list` - Lists the executed migrations on the current database
+* `errors` - Lists the various errors from migration of the database
 * `upgrade [path]` - Executes the pending migrations using the defined directory or current
 * `generate [path]` - Generates a new migration file into the target path
 
