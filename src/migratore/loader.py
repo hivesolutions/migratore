@@ -25,8 +25,9 @@ class Loader(object):
                 is_valid = migration.timestamp > timestamp
                 if not is_valid: continue
                 migration.start()
-        finally: db.close()
-        
+        finally:
+            db.close()
+
     def cmp(self, first, second):
         return cmp(first.timestamp, second.timestamp)
 
