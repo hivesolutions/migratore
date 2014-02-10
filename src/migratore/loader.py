@@ -26,6 +26,9 @@ class Loader(object):
                 if not is_valid: continue
                 migration.start()
         finally: db.close()
+        
+    def cmp(self, first, second):
+        return cmp(first.timestamp, second.timestamp)
 
 class DirectoryLoader(Loader):
 
@@ -54,4 +57,5 @@ class DirectoryLoader(Loader):
             migration = getattr(module, "migration")
             self.migrations.append(migration)
 
+        self.migrations.sort()
         return self.migrations
