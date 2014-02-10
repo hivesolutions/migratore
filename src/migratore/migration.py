@@ -58,6 +58,17 @@ class Migration(base.Console):
         finally: db.close()
 
     @classmethod
+    def trace(cls, id):
+        object_id = int(id)
+        db = base.Migratore.get_db()
+        try:
+            table = db.get_table("migratore")
+            execution = table.get(object_id = object_id)
+            traceback = execution["traceback"]
+            base.Migratore.echo(traceback)
+        finally: db.close()
+
+    @classmethod
     def upgrade(self, path = None):
         path = path or "."
         path = os.path.abspath(path)
@@ -101,6 +112,7 @@ class Migration(base.Console):
 
     @classmethod
     def _execution(cls, execution, is_first = True):
+        object_id = execution["object_id"]
         _uuid = execution["uuid"]
         timestamp = execution["timestamp"]
         description = execution["description"]
@@ -109,6 +121,7 @@ class Migration(base.Console):
         end_s = execution["end_s"]
         timstamp_s = cls._time_s(timestamp)
 
+        base.Migratore.echo("ID          -  %s" % object_id)
         base.Migratore.echo("UUID        -  %s" % _uuid)
         base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
         base.Migratore.echo("Description -  %s" % description)
@@ -119,11 +132,8 @@ class Migration(base.Console):
     @classmethod
     def _error(cls, execution, is_first = True):
         error = execution["error"]
-        traceback = execution["traceback"]
 
         base.Migratore.echo("Error       -  %s" % error)
-        base.Migratore.echo("Traceback")
-        base.Migratore.echo(traceback)
 
     def start(self, operator = "Administrator"):
         db = base.Migratore.get_db()
