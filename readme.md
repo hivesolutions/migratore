@@ -20,6 +20,7 @@ HOST=$(HOST) DB=$(DB_NAME) USERNAME=$(USERNAME) PASSWORD=$(PASSWORD) migratore.s
 * `version` - Prints the current version of migratore
 * `list` - Lists the executed migrations on the current database
 * `errors` - Lists the various errors from migration of the database
+* `trace [id]` - Prints the traceback for the error execution with the provided id
 * `upgrade [path]` - Executes the pending migrations using the defined directory or current
 * `generate [path]` - Generates a new migration file into the target path
 
