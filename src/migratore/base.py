@@ -247,9 +247,13 @@ class Database(Console):
         buffer.write(id_name)
         buffer.write(" ")
         buffer.write_type(id_type)
+        buffer.write(" ")
+        buffer.write(" primary key ")
         buffer.write(")")
         buffer.execute()
-        return self.table(self, name, id_name)
+        table = self.table(self, name, id_name)
+        table.index_column(id_name)
+        return table
 
     def drop_table(self, name):
         buffer.write("drop table ")
@@ -332,6 +336,7 @@ class Table(Console):
         self.identifier = identifier
 
     def insert(self, **kwargs):
+        self._identifier(kwargs)
         into = self._into(kwargs)
         buffer = self.owner._buffer()
         buffer.write("insert into ")
@@ -398,58 +403,20 @@ class Table(Console):
         buffer.write(self.name)
         buffer.execute()
 
-    def run(self, callable, count, title = None):
-        index = 0
-
-        while True:
-            if index >= count: break
-
-            callable(self, index)
-
-            if not title: continue
-
-            ratio = float(index) / float(count)
-            pecentage = int(ratio * 100)
-
-            self.percent("%s... [%d/100]" % (title, pecentage))
-
-            index += 1
-
-        if not title: return
-
-        self.end("%s" % title)
-
-    def apply(self, callable, title = None, where = None, **kwargs):
-        count = self.count(where = where, **kwargs)
-
-        index = 0
-
-        while True:
-            if index >= count: break
-            range = (index, ITER_SIZE)
-            results = self.select(
-                where = where,
-                range = range,
-                **kwargs
-            )
-            for result in results: callable(result)
-            index += ITER_SIZE
-
-            if not title: continue
-
-            ratio = float(index) / float(count)
-            pecentage = int(ratio * 100)
-
-            self.percent("%s... [%d/100]" % (title, pecentage))
-
-        if not title: return
-
-        self.end("%s" % title)
-
     def get(self, *args, **kwargs):
         result = self.select(*args, **kwargs)
         if not result: return None
         return result[0]
+
+    def first(self, *args, **kwargs):
+        kwargs["order_by"] = ((self.identifier, "asc"),)
+        value = self.get(*args, **kwargs)
+        return value
+
+    def last(self, *args, **kwargs):
+        kwargs["order_by"] = ((self.identifier, "desc"),)
+        value = self.get(*args, **kwargs)
+        return value
 
     def clear(self):
         return self.delete()
@@ -510,6 +477,54 @@ class Table(Console):
 
     def drop_index(self, name):
         pass
+
+    def run(self, callable, count, title = None):
+        index = 0
+
+        while True:
+            if index >= count: break
+
+            callable(self, index)
+
+            if not title: continue
+
+            ratio = float(index) / float(count)
+            pecentage = int(ratio * 100)
+
+            self.percent("%s... [%d/100]" % (title, pecentage))
+
+            index += 1
+
+        if not title: return
+
+        self.end("%s" % title)
+
+    def apply(self, callable, title = None, where = None, **kwargs):
+        count = self.count(where = where, **kwargs)
+
+        index = 0
+
+        while True:
+            if index >= count: break
+            range = (index, ITER_SIZE)
+            results = self.select(
+                where = where,
+                range = range,
+                **kwargs
+            )
+            for result in results: callable(result)
+            index += ITER_SIZE
+
+            if not title: continue
+
+            ratio = float(index) / float(count)
+            pecentage = int(ratio * 100)
+
+            self.percent("%s... [%d/100]" % (title, pecentage))
+
+        if not title: return
+
+        self.end("%s" % title)
 
     def echo(self, *args, **kwargs):
         self.owner.echo(*args, **kwargs)
@@ -580,6 +595,11 @@ class Table(Console):
             buffer.write_value(value)
 
         return buffer.join()
+
+    def _identifier(self, kwargs):
+        if self.identifier in kwargs: return
+        value = (self.last(self.identifier) or 0) + 1
+        kwargs[self.identifier] = value
 
 class Result(dict):
 

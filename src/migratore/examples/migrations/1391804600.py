@@ -21,9 +21,9 @@ class Migration(migratore.Migration):
         self.end("creating schema")
 
         def task(table, index):
-            object_id = index
-            username = "username-%d" % index
-            password = "password-%d" % index
+            object_id = index + 1
+            username = "username-%d" % object_id
+            password = "password-%d" % object_id
             table.insert(
                 object_id = object_id,
                 username = username,
