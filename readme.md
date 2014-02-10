@@ -16,8 +16,9 @@ HOST=$(HOST) DB=$(DB_NAME) USERNAME=$(USERNAME) PASSWORD=$(PASSWORD) migratore.s
 
 ## Commands
 
-* `version` - Prints a help message about the cli interface
+* `help` - Prints a help message about the cli interface
 * `version` - Prints the current version of migratore
+* `environ` - Displays the current environment in the standard output
 * `list` - Lists the executed migrations on the current database
 * `errors` - Lists the various errors from migration of the database
 * `trace [id]` - Prints the traceback for the error execution with the provided id
