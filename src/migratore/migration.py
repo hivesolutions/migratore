@@ -26,7 +26,7 @@ class Migration(base.Console):
         try:
             table = db.get_table("migratore")
             executions = table.select(
-                order_by = (("object_id", "desc"),),
+                order_by = (("object_id", "asc"),),
                 result = "success"
             )
 
