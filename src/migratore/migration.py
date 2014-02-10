@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
+import uuid
 import time
 import datetime
 import traceback
@@ -16,6 +18,36 @@ class Migration(base.Console):
 
     def __cmp__(self, value):
         return cmp(self.timestamp, value.timestamp)
+
+    @classmethod
+    def generate(cls, path = None):
+        _uuid = uuid.uuid4()
+        _uuid = str(_uuid)
+        timestamp = time.time()
+        timestamp = int(timestamp)
+        description = "migration %s" % _uuid
+        args = (_uuid, timestamp, description)
+        path = path or str(timestamp) + ".py"
+
+        file_path = os.path.abspath(__file__)
+        dir_path = os.path.dirname(file_path)
+        templates_path = os.path.join(dir_path, "templates")
+        template_path = os.path.join(templates_path, "migration.py.tpl")
+
+        base.Migratore.echo("Generating migration '%s'" % path)
+        data = cls.template(template_path, *args)
+        file = open(path, "wb")
+        try: file.write(data)
+        finally: file.close()
+        base.Migratore.echo("Migration '%s' generated" % path)
+
+    @classmethod
+    def template(cls, path, *args):
+        file = open(path, "rb")
+        try: contents = file.read()
+        finally: file.close()
+
+        return contents % args
 
     def start(self, operator = "Administrator"):
         db = base.Migratore.get_db()

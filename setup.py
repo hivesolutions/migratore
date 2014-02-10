@@ -35,6 +35,9 @@ setuptools.setup(
     package_dir = {
         "" : os.path.normpath("src")
     },
+    package_data = {
+        "migratore" : ["templates/*"]
+    },
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
