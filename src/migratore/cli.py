@@ -7,7 +7,6 @@ import migration
 def run_help():
     print "%s %s (%s)" % (info.NAME, info.VERSION, info.AUTHOR)
     print ""
-    print "The most commonly used migratore commands are:"
     print "  version         Prints the current version of migratore"
     print "  list            Lists the executed migrations on the current database"
     print "  errors          Lists the various errors from migration of the database"

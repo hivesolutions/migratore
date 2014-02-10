@@ -141,7 +141,7 @@ class Migration(base.Console):
 
     def start(self, operator = "Administrator"):
         db = base.Migratore.get_db()
-        try: self._start(db, operator)
+        try: return self._start(db, operator)
         finally: db.close()
 
     def run(self, db):
@@ -155,17 +155,17 @@ class Migration(base.Console):
 
         result = "success"
         error = None
-        lines = None
+        lines_s = None
         start = time.time()
 
         try: self.run(db)
         except BaseException, exception:
             db.rollback()
             lines = traceback.format_exc().splitlines()
-            lines = "\n".join(lines)
+            lines_s = "\n".join(lines)
             result = "error"
             error = str(exception)
-            self.echo(error)
+            for line in lines: self.echo(line)
         else: db.commit()
         finally: self.cleanup(db)
 
@@ -184,7 +184,7 @@ class Migration(base.Console):
             description = self.description,
             result = result,
             error = error,
-            traceback = lines,
+            traceback = lines_s,
             operator = operator,
             start = start,
             end = end,
@@ -193,3 +193,5 @@ class Migration(base.Console):
             end_s = end_s,
         )
         db.commit()
+
+        return result

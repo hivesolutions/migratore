@@ -24,7 +24,8 @@ class Loader(object):
             for migration in migrations:
                 is_valid = migration.timestamp > timestamp
                 if not is_valid: continue
-                migration.start()
+                result = migration.start()
+                if not result == "success": break
         finally:
             db.close()
 
