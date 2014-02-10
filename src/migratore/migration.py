@@ -8,6 +8,7 @@ import datetime
 import traceback
 
 import base
+import loader
 
 class Migration(base.Console):
 
@@ -50,6 +51,12 @@ class Migration(base.Console):
                 base.Migratore.echo("End time    -  %s" % end_s)
 
         finally: db.close()
+
+    @classmethod
+    def upgrade(self, path = None):
+        path = path or "."
+        _loader = loader.DirectoryLoader(path)
+        _loader.upgrade()
 
     @classmethod
     def generate(cls, path = None):
