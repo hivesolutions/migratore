@@ -398,6 +398,27 @@ class Table(Console):
         buffer.write(self.name)
         buffer.execute()
 
+    def run(self, callable, count, title = None):
+        index = 0
+
+        while True:
+            if index >= count: break
+
+            callable(self, index)
+
+            if not title: continue
+
+            ratio = float(index) / float(count)
+            pecentage = int(ratio * 100)
+
+            self.percent("%s... [%d/100]" % (title, pecentage))
+
+            index += 1
+
+        if not title: return
+
+        self.end("%s" % title)
+
     def apply(self, callable, title = None, where = None, **kwargs):
         count = self.count(where = where, **kwargs)
 
@@ -426,7 +447,9 @@ class Table(Console):
         self.end("%s" % title)
 
     def get(self, *args, **kwargs):
-        return self.select(*args, **kwargs)[0]
+        result = self.select(*args, **kwargs)
+        if not result: return None
+        return result[0]
 
     def clear(self):
         return self.delete()
