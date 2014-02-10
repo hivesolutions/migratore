@@ -31,9 +31,6 @@ if __name__ == "__main__":
     loader = migratore.DirectoryLoader("C:/repo.extra/migratore/src/migratore/examples/migrations")
     loader.upgrade()
 
-    #migration = TestMigration()
-    #migration.start()
-
     #db = migratore.Migratore.get_db()
     #table = db.get_table("migratore")
     #print table.get()

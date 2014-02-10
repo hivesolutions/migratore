@@ -13,7 +13,7 @@ class Migration(base.Console):
         self.uuid = None
         self.timestamp = None
         self.description = None
-        
+
     def __cmp__(self, value):
         return cmp(self.timestamp, value.timestamp)
 
