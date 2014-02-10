@@ -24,5 +24,3 @@ def run_apply(path = None):
 
 def run_generate(path = None):
     migration.Migration.generate(path)
-
-run_list()

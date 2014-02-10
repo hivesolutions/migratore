@@ -28,6 +28,8 @@ class Migration(base.Console):
                 order_by = (("object_id", "desc"),),
                 result = "success"
             )
+
+            is_first = True
             for execution in executions:
                 _uuid = execution["uuid"]
                 timestamp = execution["timestamp"]
@@ -37,13 +39,16 @@ class Migration(base.Console):
                 end_s = execution["end_s"]
                 timstamp_s = cls._time_s(timestamp)
 
+                if is_first: is_first = False
+                else: base.Migratore.echo("")
+
                 base.Migratore.echo("UUID        -  %s" % _uuid)
                 base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
                 base.Migratore.echo("Description -  %s" % description)
                 base.Migratore.echo("Operator    -  %s" % operator)
                 base.Migratore.echo("Start time  -  %s" % start_s)
                 base.Migratore.echo("End time    -  %s" % end_s)
-                base.Migratore.echo("")
+
         finally: db.close()
 
     @classmethod
@@ -61,12 +66,12 @@ class Migration(base.Console):
         templates_path = os.path.join(dir_path, "templates")
         template_path = os.path.join(templates_path, "migration.py.tpl")
 
-        base.Migratore.echo("Generating migration '%s'" % path)
+        base.Migratore.echo("Generating migration '%s'..." % _uuid)
         data = cls.template(template_path, *args)
         file = open(path, "wb")
         try: file.write(data)
         finally: file.close()
-        base.Migratore.echo("Migration '%s' generated" % path)
+        base.Migratore.echo("Migration file '%s' generated" % path)
 
     @classmethod
     def template(cls, path, *args):
