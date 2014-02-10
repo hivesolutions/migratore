@@ -1,0 +1,43 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import setuptools
+
+BASE_PATH = os.path.realpath(__file__)
+BASE_DIR = os.path.dirname(BASE_PATH)
+MIGRATORE_DIR = os.path.join(BASE_DIR, "src", "migratore")
+sys.path.insert(0, MIGRATORE_DIR)
+
+import info
+
+setuptools.setup(
+    name = info.NAME,
+    version = info.VERSION,
+    author = info.AUTHOR,
+    author_email = info.EMAIL,
+    description = info.DESCRIPTION,
+    license = info.LICENSE,
+    keywords = info.KEYWORDS,
+    url = info.URL,
+    zip_safe = True,
+    packages = [
+        "migratore",
+        "migratore.examples",
+        "migratore.examples.migrations"
+    ],
+    test_suite = "quorum.test",
+    package_dir = {
+        "" : os.path.normpath("src")
+    },
+    classifiers = [
+        "Development Status :: 3 - Alpha",
+        "Topic :: Utilities",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7"
+    ]
+)
