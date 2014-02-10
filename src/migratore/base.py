@@ -74,6 +74,25 @@ class Migratore(object):
         if nl: file.write("\n")
 
     @classmethod
+    def echo_map(cls, map):
+        largest = 0
+        
+        for key in map.iterkeys():
+            key_l = len(key)
+            if not key_l > largest: continue
+            largest = key_l
+        
+        for key, value in map.iteritems():
+            key_l = len(key)
+            value_s = str(value)
+            remaining = largest - key_l
+            cls.echo(key, nl = False)
+            for _index in xrange(remaining):
+                cls.echo(" ", nl = False)
+            cls.echo(" : ", nl = False)
+            cls.echo(value_s)
+
+    @classmethod
     def _get_mysql(cls, *args, **kwargs):
         import mysql
         import MySQLdb
@@ -112,9 +131,9 @@ class Console(object):
         message = self.title(message)
         self.echo("  * %s... done     " % message)
 
-    def percent(self, message):
+    def percent(self, message, percentage):
         message = self.title(message)
-        self.echo("  * %s\r" % message, False)
+        self.echo("  * %s [%d/100]...\r" % (message, percentage), False)
 
     def title(self, value):
         if not value: return value
@@ -491,7 +510,7 @@ class Table(Console):
             ratio = float(index) / float(count)
             pecentage = int(ratio * 100)
 
-            self.percent("%s... [%d/100]" % (title, pecentage))
+            self.percent(title, pecentage)
 
             index += 1
 
@@ -520,7 +539,7 @@ class Table(Console):
             ratio = float(index) / float(count)
             pecentage = int(ratio * 100)
 
-            self.percent("%s... [%d/100]" % (title, pecentage))
+            self.percent(title, pecentage)
 
         if not title: return
 

@@ -21,6 +21,13 @@ class Migration(base.Console):
         return cmp(self.timestamp, value.timestamp)
 
     @classmethod
+    def environ(cls):
+        args = list()
+        kwargs = dict()
+        base.Migratore._environ(args, kwargs)
+        base.Migratore.echo_map(kwargs) 
+
+    @classmethod
     def list(cls):
         db = base.Migratore.get_db()
         try:
@@ -124,20 +131,20 @@ class Migration(base.Console):
 
         duration_l = "second" if duration == 1 else "seconds"
 
-        base.Migratore.echo("ID          -  %s" % object_id)
-        base.Migratore.echo("UUID        -  %s" % _uuid)
-        base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
-        base.Migratore.echo("Description -  %s" % description)
-        base.Migratore.echo("Operator    -  %s" % operator)
-        base.Migratore.echo("Duration    -  %d %s" % (duration, duration_l))
-        base.Migratore.echo("Start time  -  %s" % start_s)
-        base.Migratore.echo("End time    -  %s" % end_s)
+        base.Migratore.echo("ID          : %s" % object_id)
+        base.Migratore.echo("UUID        : %s" % _uuid)
+        base.Migratore.echo("Timestamp   : %d (%s)" % (timestamp, timstamp_s))
+        base.Migratore.echo("Description : %s" % description)
+        base.Migratore.echo("Operator    : %s" % operator)
+        base.Migratore.echo("Duration    : %d %s" % (duration, duration_l))
+        base.Migratore.echo("Start time  : %s" % start_s)
+        base.Migratore.echo("End time    : %s" % end_s)
 
     @classmethod
     def _error(cls, execution, is_first = True):
         error = execution["error"]
 
-        base.Migratore.echo("Error       -  %s" % error)
+        base.Migratore.echo("Error       :  %s" % error)
 
     def start(self, operator = "Administrator"):
         db = base.Migratore.get_db()

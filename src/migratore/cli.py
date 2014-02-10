@@ -8,6 +8,7 @@ def run_help():
     print "%s %s (%s)" % (info.NAME, info.VERSION, info.AUTHOR)
     print ""
     print "  version         Prints the current version of migratore"
+    print "  environ         Displays the current environment in the standard output"
     print "  list            Lists the executed migrations on the current database"
     print "  errors          Lists the various errors from migration of the database"
     print "  trace [id]      Prints the traceback for the error execution with the provided id"
@@ -16,6 +17,9 @@ def run_help():
 
 def run_version():
     print "%s %s" % (info.NAME, info.VERSION)
+
+def run_environ():
+    migration.Migration.environ()
 
 def run_list():
     migration.Migration.list()
