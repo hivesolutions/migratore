@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
+
 import migratore
 
 def build(db):
@@ -28,27 +30,8 @@ def select(db):
     print table.get("object_id", username = "new-0", object_id = 0)
 
 if __name__ == "__main__":
-    loader = migratore.DirectoryLoader("C:/repo.extra/migratore/src/migratore/examples/migrations")
+    file_path = os.path.abspath(__file__)
+    dir_path = os.path.dirname(file_path)
+    migrations_path = os.path.join(dir_path, "migrations")
+    loader = migratore.DirectoryLoader(migrations_path)
     loader.upgrade()
-
-    #db = migratore.Migratore.get_db()
-    #table = db.get_table("migratore")
-    #print table.get()
-
-    #db.names_table("migratore")
-    #try:
-    #    try: build(db)
-    #    except: pass
-    #    cleanup(db)
-    #    data(db)
-    #    update(db)
-    #    select(db)
-    #finally:
-    #    db.close()
-
-    # @todo tenho de implementar os indexex no add column
-
-    # @todo tenho de criar a tabela migrations se nao tiver
-
-    # @todo se tiver bulk operations por agulam informacao de progresso
-    # e por isso com o \n
