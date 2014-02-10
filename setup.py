@@ -27,7 +27,11 @@ setuptools.setup(
         "migratore.examples",
         "migratore.examples.migrations"
     ],
-    test_suite = "quorum.test",
+    scripts = [
+        "scripts/pypi/migratore_pypi.py",
+        "scripts/pypi/migratore.bat",
+        "scripts/pypi/migratore.sh"
+    ],
     package_dir = {
         "" : os.path.normpath("src")
     },
