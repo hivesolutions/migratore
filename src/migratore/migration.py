@@ -117,15 +117,19 @@ class Migration(base.Console):
         timestamp = execution["timestamp"]
         description = execution["description"]
         operator = execution["operator"]
+        duration = execution["duration"]
         start_s = execution["start_s"]
         end_s = execution["end_s"]
         timstamp_s = cls._time_s(timestamp)
+
+        duration_l = "second" if duration == 1 else "seconds"
 
         base.Migratore.echo("ID          -  %s" % object_id)
         base.Migratore.echo("UUID        -  %s" % _uuid)
         base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
         base.Migratore.echo("Description -  %s" % description)
         base.Migratore.echo("Operator    -  %s" % operator)
+        base.Migratore.echo("Duration    -  %d %s" % (duration, duration_l))
         base.Migratore.echo("Start time  -  %s" % start_s)
         base.Migratore.echo("End time    -  %s" % end_s)
 
