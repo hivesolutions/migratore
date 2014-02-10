@@ -55,6 +55,7 @@ class DirectoryLoader(Loader):
             modules.append(module)
 
         for module in modules:
+            if not hasattr(module, "migration"): continue
             migration = getattr(module, "migration")
             self.migrations.append(migration)
 
