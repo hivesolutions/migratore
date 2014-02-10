@@ -60,6 +60,7 @@ class Migration(base.Console):
     @classmethod
     def upgrade(self, path = None):
         path = path or "."
+        path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
         _loader.upgrade()
 
