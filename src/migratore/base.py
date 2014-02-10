@@ -207,6 +207,15 @@ class Database(Console):
     def table(self, *args, **kwargs):
         return Table(*args, **kwargs)
 
+    def timestamp(self):
+        table = self.get_table("migratore")
+        timestamp = table.get(
+            "timestamp",
+            order_by = (("timestamp", "desc"),),
+            result = "success"
+        )
+        return timestamp
+
     def ensure_system(self):
         exists = self.exists_table("migratore")
         if exists: return
@@ -331,7 +340,14 @@ class Table(Console):
         buffer.write(into)
         buffer.execute()
 
-    def select(self, fnames = None, where = None, range = None, **kwargs):
+    def select(
+        self,
+        fnames = None,
+        where = None,
+        range = None,
+        order_by = None,
+        **kwargs
+    ):
         fnames = fnames or self.owner.names_table(self.name)
         names = self._names(fnames)
         buffer = self.owner._buffer()
@@ -339,7 +355,13 @@ class Table(Console):
         buffer.write(names)
         buffer.write(" from ")
         buffer.write(self.name)
-        self.tail(buffer, where = where, range = range, **kwargs)
+        self.tail(
+            buffer,
+            where = where,
+            range = range,
+            order_by = order_by,
+            **kwargs
+        )
         results = buffer.execute(fetch = True)
         results = self._pack(fnames, results)
         return results
@@ -409,7 +431,14 @@ class Table(Console):
     def clear(self):
         return self.delete()
 
-    def tail(self, buffer, where = None, range = None, **kwargs):
+    def tail(
+        self,
+        buffer,
+        where = None,
+        range = None,
+        order_by = None,
+        **kwargs
+    ):
         where = where or self._where(kwargs)
         if where:
             buffer.write(" where ")
@@ -421,6 +450,14 @@ class Table(Console):
             buffer.write(limit)
             buffer.write(" offset ")
             buffer.write(offset)
+        if order_by:
+            is_first = True
+            buffer.write(" order by ")
+            for order in order_by:
+                if is_first: is_first = False
+                else: buffer.write(", ")
+                order_s = " ".join(order)
+                buffer.write(order_s)
 
     def add_column(self, name, type = "integer", index = False):
         buffer = self.owner._buffer()

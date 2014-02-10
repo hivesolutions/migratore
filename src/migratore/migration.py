@@ -12,7 +12,6 @@ class Migration(base.Console):
     def __init__(self):
         self.uuid = None
         self.timestamp = None
-        self.name = None
         self.description = None
 
     def start(self, operator = "Administrator"):
@@ -55,7 +54,6 @@ class Migration(base.Console):
         table.insert(
             uuid = self.uuid,
             timestamp = self.timestamp,
-            name = self.name,
             description = self.description,
             result = result,
             error = error,

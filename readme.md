@@ -1,6 +1,6 @@
 # Migratore Infra-Structure
 
-Simple migration frmework / infra-structure for the 
+Simple migration framework / infra-structure for SQL based databases.
 
 ## Examples
 
