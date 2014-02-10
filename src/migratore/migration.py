@@ -32,23 +32,28 @@ class Migration(base.Console):
 
             is_first = True
             for execution in executions:
-                _uuid = execution["uuid"]
-                timestamp = execution["timestamp"]
-                description = execution["description"]
-                operator = execution["operator"]
-                start_s = execution["start_s"]
-                end_s = execution["end_s"]
-                timstamp_s = cls._time_s(timestamp)
-
                 if is_first: is_first = False
                 else: base.Migratore.echo("")
+                cls._execution(execution, is_first = is_first)
 
-                base.Migratore.echo("UUID        -  %s" % _uuid)
-                base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
-                base.Migratore.echo("Description -  %s" % description)
-                base.Migratore.echo("Operator    -  %s" % operator)
-                base.Migratore.echo("Start time  -  %s" % start_s)
-                base.Migratore.echo("End time    -  %s" % end_s)
+        finally: db.close()
+
+    @classmethod
+    def errors(cls):
+        db = base.Migratore.get_db()
+        try:
+            table = db.get_table("migratore")
+            executions = table.select(
+                order_by = (("object_id", "asc"),),
+                result = "error"
+            )
+
+            is_first = True
+            for execution in executions:
+                if is_first: is_first = False
+                else: base.Migratore.echo("")
+                cls._execution(execution, is_first = is_first)
+                cls._error(execution, is_first = is_first)
 
         finally: db.close()
 
@@ -93,6 +98,31 @@ class Migration(base.Console):
         date_time = datetime.datetime.utcfromtimestamp(timestamp)
         return date_time.strftime("%d %b %Y %H:%M:%S")
 
+    @classmethod
+    def _execution(cls, execution, is_first = True):
+        _uuid = execution["uuid"]
+        timestamp = execution["timestamp"]
+        description = execution["description"]
+        operator = execution["operator"]
+        start_s = execution["start_s"]
+        end_s = execution["end_s"]
+        timstamp_s = cls._time_s(timestamp)
+
+        base.Migratore.echo("UUID        -  %s" % _uuid)
+        base.Migratore.echo("Timestamp   -  %d (%s)" % (timestamp, timstamp_s))
+        base.Migratore.echo("Description -  %s" % description)
+        base.Migratore.echo("Operator    -  %s" % operator)
+        base.Migratore.echo("Start time  -  %s" % start_s)
+        base.Migratore.echo("End time    -  %s" % end_s)
+
+    @classmethod
+    def _error(cls, execution, is_first = True):
+        error = execution["error"]
+        traceback = execution["traceback"]
+
+        base.Migratore.echo("Error       -  %s" % error)
+        base.Migratore.echo("Traceback")
+        base.Migratore.echo(traceback)
 
     def start(self, operator = "Administrator"):
         db = base.Migratore.get_db()
