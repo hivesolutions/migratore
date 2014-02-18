@@ -25,7 +25,7 @@ class Migration(base.Console):
         args = list()
         kwargs = dict()
         base.Migratore._environ(args, kwargs)
-        base.Migratore.echo_map(kwargs) 
+        base.Migratore.echo_map(kwargs)
 
     @classmethod
     def list(cls):

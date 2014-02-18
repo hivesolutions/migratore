@@ -76,12 +76,12 @@ class Migratore(object):
     @classmethod
     def echo_map(cls, map):
         largest = 0
-        
+
         for key in map.iterkeys():
             key_l = len(key)
             if not key_l > largest: continue
             largest = key_l
-        
+
         for key, value in map.iteritems():
             key_l = len(key)
             value_s = str(value)
