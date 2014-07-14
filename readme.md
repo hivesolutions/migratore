@@ -1,4 +1,4 @@
-# Migratore Infra-Structure
+# [Migratore](http://migratore.hive.pt)
 
 Simple migration framework / infra-structure for SQL based databases.
 
