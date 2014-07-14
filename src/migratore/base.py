@@ -10,6 +10,18 @@ ITER_SIZE = 10
 """ The size to be used as reference for each iteration meaning
 that each iteration of data retrieval will have this size """
 
+ALIAS = dict(
+    DB_HOST = "HOST",
+    DB_PORT = "PORT",
+    DB_USER = "USERNAME",
+    DB_USERNAME = "USERNAME",
+    DB_PASSWORD = "PASSWORD",
+    DB_NAME = "DB"
+)
+""" The map defining the various environment variable alias, mapping
+the base value to the target value, this is required so that new
+names are allowed to be used and legacy support is provided """
+
 SEQUENCE_TYPES = (
     types.ListType,
     types.TupleType
@@ -113,6 +125,7 @@ class Migratore(object):
     @classmethod
     def _environ(cls, args, kwargs):
         for key, value in os.environ.iteritems():
+            key = ALIAS.get(key, key)
             if not key in VALID_TYPES: continue
             _type = VALID_TYPES[key]
             key_l = key.lower()
