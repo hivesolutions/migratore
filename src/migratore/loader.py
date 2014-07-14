@@ -14,10 +14,10 @@ class Loader(object):
     def load(self):
         return self.migrations
 
-    def upgrade(self):
+    def upgrade(self, *args, **kwargs):
         migrations = self.load()
 
-        db = base.Migratore.get_db()
+        db = base.Migratore.get_db(*args, **kwargs)
         try:
             timestamp = db.timestamp()
             timestamp = timestamp or 0

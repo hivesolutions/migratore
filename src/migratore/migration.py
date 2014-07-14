@@ -76,11 +76,11 @@ class Migration(base.Console):
         finally: db.close()
 
     @classmethod
-    def upgrade(self, path = None):
+    def upgrade(self, path = None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
-        _loader.upgrade()
+        _loader.upgrade(*args, **kwargs)
 
     @classmethod
     def generate(cls, path = None):
