@@ -11,7 +11,7 @@ pip install migratore
 ## Execution
 
 ```
-HOST=$(HOST) DB=$(DB_NAME) USERNAME=$(USERNAME) PASSWORD=$(PASSWORD) migratore.sh upgrade
+HOST=$(HOST) DB=$(DB_NAME) USERNAME=$(USERNAME) PASSWORD=$(PASSWORD) migratore upgrade
 ```
 
 ## Commands
