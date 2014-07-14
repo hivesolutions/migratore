@@ -5,7 +5,7 @@ Simple migration framework / infra-structure for SQL based databases.
 ## Installation
 
 ```bash
-easy_install migratore
+pip install migratore
 ```
 
 ## Execution
