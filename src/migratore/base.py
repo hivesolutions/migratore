@@ -531,8 +531,9 @@ class Table(Console):
 
         self.end("%s" % title)
 
-    def apply(self, callable, title = None, where = None, **kwargs):
+    def apply(self, callable, title = None, where = None, limit = None, **kwargs):
         count = self.count(where = where, **kwargs)
+        if not limit == None: count = limit if count > limit else count 
 
         index = 0
 
