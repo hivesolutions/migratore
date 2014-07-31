@@ -38,6 +38,11 @@ setuptools.setup(
     package_data = {
         "migratore" : ["templates/*"]
     },
+    entry_points = {
+        "console_scripts" : [
+            "migratore = migratore.cli:main"
+        ]
+    },
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
