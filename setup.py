@@ -27,11 +27,6 @@ setuptools.setup(
         "migratore.examples",
         "migratore.examples.migrations"
     ],
-    scripts = [
-        "scripts/pypi/migratore",
-        "scripts/pypi/migratore.bat",
-        "scripts/pypi/migratore_pypi.py"
-    ],
     package_dir = {
         "" : os.path.normpath("src")
     },
