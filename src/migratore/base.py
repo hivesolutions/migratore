@@ -71,6 +71,8 @@ class Migratore(object):
 
     @classmethod
     def get_database(cls, *args, **kwargs):
+        database = hasattr(cls, "_database") and cls._database
+        if database: return database
         cls._environ(args, kwargs)
         engine = kwargs.get("engine", "mysql")
         debug = kwargs.get("debug", False)
@@ -78,6 +80,7 @@ class Migratore(object):
         database = method(*args, **kwargs)
         database.debug = debug
         database.open()
+        cls._database = database
         return database
 
     @classmethod
@@ -113,6 +116,7 @@ class Migratore(object):
         username = kwargs.get("username", "root")
         password = kwargs.get("password", "root")
         name = kwargs.get("db", "default")
+        isolation = kwargs.get("isolation", "read committed")
         connection = MySQLdb.connect(
             host,
             port = port,
@@ -120,7 +124,9 @@ class Migratore(object):
             passwd = password,
             db = name
         )
-        return mysql.MySQLDatabase(connection, name)
+        database = mysql.MySQLDatabase(connection, name)
+        database.execute("set session transaction isolation level %s" % isolation)
+        return database
 
     @classmethod
     def _environ(cls, args, kwargs):
@@ -531,9 +537,9 @@ class Table(Console):
 
         self.end("%s" % title)
 
-    def apply(self, callable, title = None, where = None, limit = None, **kwargs):
+    def apply(self, callable, title = None, limit = None, where = None, **kwargs):
         count = self.count(where = where, **kwargs)
-        if not limit == None: count = limit if count > limit else count 
+        if not limit == None: count = limit if count > limit else count
 
         index = 0
 
