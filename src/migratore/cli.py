@@ -55,12 +55,15 @@ def main():
     # structure to be used for command resolution
     migratore = globals()
 
-    # retrieves both the loader command for the current
-    # scope and then uses it to execute the command with
-    # the extra arguments as the passing value
-    is_command = hasattr(migratore, "run_" + scope)
-    if is_command: command = getattr(migratore, "run_" + scope)
-    else: command = getattr(migratore, scope)
+    # tries to retrieve the proper command method using all
+    # of the possible strategies and failing with an exception
+    # in case none of the retrieval strategies have succeeded
+    command = migratore.get(scope, None)
+    command = migratore.get("run_" + scope, command)
+    if not command: raise RuntimeError("Invalid command provided")
+
+    # runs the command that has just been retrieved and with the
+    # arguments provided by the command line (as expected)
     command(*args)
 
 if __name__ == "__main__":
