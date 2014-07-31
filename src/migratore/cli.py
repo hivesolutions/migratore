@@ -39,9 +39,9 @@ def run_generate(path = None):
 
 def main():
     # validates that the provided number of arguments
-    # is the expected one, in case it's not raises a
-    # runtime error indicating the problem
-    if len(sys.argv) < 2: raise RuntimeError("Invalid number of arguments")
+    # is the expected one, in case it's not uses the
+    # default command as the argument value
+    if len(sys.argv) < 2: sys.argv.append("help")
 
     # retrieves the fir
     scope = sys.argv[1]
