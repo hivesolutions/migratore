@@ -84,6 +84,12 @@ class Migratore(object):
         return database
 
     @classmethod
+    def get_fs(cls, *args, **kwargs):
+        cls._environ(args, kwargs)
+        fs = kwargs.get("fs", "")
+        return fs
+
+    @classmethod
     def echo(cls, message, nl = True, file = sys.stdout):
         file.write(message)
         if nl: file.write("\n")
