@@ -154,6 +154,9 @@ class Migration(base.Console):
     def run(self, db):
         self.echo("Running migration '%s'" % self.uuid)
 
+    def partial(self, db):
+        self.echo("Running partial '%s'" % self.uuid)
+
     def cleanup(self, db):
         self.echo("Cleaning up...")
 
