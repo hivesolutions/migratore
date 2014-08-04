@@ -27,4 +27,16 @@ class Migration(migratore.Migration):
 
         table.apply(task, title = "updating descriptions")
 
+    def partial(self, db):
+        migratore.Migration.partial(self, db)
+
+        table = db.get_table("users")
+
+        def task(value):
+            username = value["username"]
+            description = "description-" + username
+            value.update(description = description)
+
+        table.apply(task, title = "updating descriptions")
+
 migration = Migration()
