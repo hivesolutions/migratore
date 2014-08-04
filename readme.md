@@ -22,6 +22,7 @@ HOST=${DB_HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASSWORD} migrat
 * `list` - Lists the executed migrations on the current database
 * `errors` - Lists the various errors from migration of the database
 * `trace [id]` - Prints the traceback for the error execution with the provided id
+* `rebuild [id]` - Run the partial execution of the migration with the given id
 * `upgrade [path]` - Executes the pending migrations using the defined directory or current
 * `generate [path]` - Generates a new migration file into the target path
 

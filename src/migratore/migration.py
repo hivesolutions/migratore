@@ -76,6 +76,13 @@ class Migration(base.Console):
         finally: db.close()
 
     @classmethod
+    def rebuild(self, id, *args, **kwargs):
+        path = "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.partial(id, *args, **kwargs)
+
+    @classmethod
     def upgrade(self, path = None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)
@@ -146,7 +153,7 @@ class Migration(base.Console):
 
         base.Migratore.echo("Error       :  %s" % error)
 
-    def start(self, operator = "Administrator"):
+    def start(self, operator = "Administrator", operation = "run"):
         db = base.Migratore.get_db()
         try: return self._start(db, operator)
         finally: db.close()
@@ -160,7 +167,7 @@ class Migration(base.Console):
     def cleanup(self, db):
         self.echo("Cleaning up...")
 
-    def _start(self, db, operator):
+    def _start(self, db, operator, operation):
         cls = self.__class__
 
         result = "success"
@@ -168,7 +175,8 @@ class Migration(base.Console):
         lines_s = None
         start = time.time()
 
-        try: self.run(db)
+        method = getattr(self, operation)
+        try: method(db)
         except BaseException, exception:
             db.rollback()
             lines = traceback.format_exc().splitlines()
