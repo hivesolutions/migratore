@@ -189,6 +189,8 @@ class Migration(base.Console):
         else: db.commit()
         finally: self.cleanup(db)
 
+        operation_s = operation.title()
+
         end = time.time()
         start = int(start)
         end = int(end)
@@ -205,7 +207,7 @@ class Migration(base.Console):
             result = result,
             error = error,
             traceback = lines_s,
-            operation = operation,
+            operation = operation_s,
             operator = operator,
             start = start,
             end = end,
