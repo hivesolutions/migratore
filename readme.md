@@ -14,6 +14,14 @@ pip install migratore
 HOST=${DB_HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASSWORD} migratore upgrade
 ```
 
+## Variables
+
+* `HOST` - Hostname or IP address of the database system for migration
+* `DB` - Name of the database used as the migration target
+* `USERNAME` - Username for authentication in database
+* `USERNAME` - Password to be used for authentication in database
+* `FS` - Base file system path for file migration (may depend on migration context)
+
 ## Commands
 
 * `help` - Prints a help message about the cli interface
