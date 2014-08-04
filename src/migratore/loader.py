@@ -15,10 +15,6 @@ class Loader(object):
     def load(self):
         return self.migrations
 
-    def rebuild(self, id, *args, **kwargs):
-        migration = self.migrations_m[id]
-        migration.start(operation = "partial")
-
     def upgrade(self, *args, **kwargs):
         migrations = self.load()
 
@@ -33,6 +29,10 @@ class Loader(object):
                 if not result == "success": break
         finally:
             db.close()
+
+    def rebuild(self, id, *args, **kwargs):
+        migration = self.migrations_m[id]
+        migration.start(operation = "partial")
 
     def cmp(self, first, second):
         return cmp(first.timestamp, second.timestamp)
