@@ -31,6 +31,7 @@ class Loader(object):
             db.close()
 
     def rebuild(self, id, *args, **kwargs):
+        self.load()
         migration = self.migrations_m[id]
         migration.start(operation = "partial")
 
@@ -63,10 +64,9 @@ class DirectoryLoader(Loader):
         for module in modules:
             if not hasattr(module, "migration"): continue
             migration = getattr(module, "migration")
-            instance = migration()
             self.migrations.append(migration)
-            self.migrations_m[instance.uuid] = migration
-            self.migrations_m[str(instance.timestamp)] = migration
+            self.migrations_m[migration.uuid] = migration
+            self.migrations_m[str(migration.timestamp)] = migration
 
         self.migrations.sort()
         return self.migrations
