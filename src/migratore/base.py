@@ -275,6 +275,7 @@ class Database(Console):
         table.add_column("error", type = "text")
         table.add_column("traceback", type = "text")
         table.add_column("operator", type = "text")
+        table.add_column("operation", type = "text")
         table.add_column("start", type = "integer", index = True)
         table.add_column("end", type = "integer", index = True)
         table.add_column("duration", type = "integer", index = True)

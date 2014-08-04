@@ -153,9 +153,9 @@ class Migration(base.Console):
 
         base.Migratore.echo("Error       :  %s" % error)
 
-    def start(self, operator = "Administrator", operation = "run"):
+    def start(self, operation = "run", operator = "Administrator"):
         db = base.Migratore.get_db()
-        try: return self._start(db, operator)
+        try: return self._start(db, operation, operator)
         finally: db.close()
 
     def run(self, db):
@@ -167,7 +167,7 @@ class Migration(base.Console):
     def cleanup(self, db):
         self.echo("Cleaning up...")
 
-    def _start(self, db, operator, operation):
+    def _start(self, db, operation, operator):
         cls = self.__class__
 
         result = "success"
@@ -203,6 +203,7 @@ class Migration(base.Console):
             result = result,
             error = error,
             traceback = lines_s,
+            operation = operation,
             operator = operator,
             start = start,
             end = end,
