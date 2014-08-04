@@ -13,6 +13,7 @@ def run_help():
     print "  list            Lists the executed migrations on the current database"
     print "  errors          Lists the various errors from migration of the database"
     print "  trace [id]      Prints the traceback for the error execution with the provided id"
+    print "  rebuild [id]    Run the partial execution of the migration with the given id"
     print "  upgrade [path]  Executes the pending migrations using the defined directory or current"
     print "  generate [path] Generates a new migration file into the target path"
 
@@ -30,6 +31,9 @@ def run_errors():
 
 def run_trace(id):
     migration.Migration.trace(id)
+
+def run_rebuild(id):
+    migration.Migration.rebuild(id)
 
 def run_upgrade(path = None):
     migration.Migration.upgrade(path)
