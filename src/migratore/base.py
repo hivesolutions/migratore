@@ -554,16 +554,17 @@ class Table(Console):
 
         self.end("%s" % title)
 
-    def apply(self, callable, title = None, limit = None, where = None, **kwargs):
+    def apply(self, callable, title = None, limit = None, eager = False, where = None, **kwargs):
         count = self.count(where = where, **kwargs)
         if not limit == None: count = limit if count > limit else count
 
         index = 0
+        if eager: source = self.select(where = where, **kwargs)
 
         while True:
             if index >= count: break
             range = (index, ITER_SIZE)
-            results = self.select(
+            results = source[index:index + ITER_SIZE] if eager else self.select(
                 where = where,
                 range = range,
                 **kwargs
