@@ -130,6 +130,7 @@ class Migration(base.Console):
         _uuid = execution["uuid"]
         timestamp = execution["timestamp"]
         description = execution["description"]
+        operation = execution["operation"]
         operator = execution["operator"]
         duration = execution["duration"]
         start_s = execution["start_s"]
@@ -142,6 +143,7 @@ class Migration(base.Console):
         base.Migratore.echo("UUID        : %s" % _uuid)
         base.Migratore.echo("Timestamp   : %d (%s)" % (timestamp, timstamp_s))
         base.Migratore.echo("Description : %s" % description)
+        base.Migratore.echo("Operation   : %s" % operation)
         base.Migratore.echo("Operator    : %s" % operator)
         base.Migratore.echo("Duration    : %d %s" % (duration, duration_l))
         base.Migratore.echo("Start time  : %s" % start_s)
