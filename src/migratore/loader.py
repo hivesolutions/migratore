@@ -65,7 +65,8 @@ class DirectoryLoader(Loader):
             migration = getattr(module, "migration")
             instance = migration()
             self.migrations.append(migration)
-            self.migrations_m[instance.id] = migration
+            self.migrations_m[instance.uuid] = migration
+            self.migrations_m[str(instance.timestamp)] = migration
 
         self.migrations.sort()
         return self.migrations
