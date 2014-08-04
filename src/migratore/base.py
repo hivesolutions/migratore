@@ -262,8 +262,22 @@ class Database(Console):
 
     def ensure_system(self):
         exists = self.exists_table("migratore")
-        if exists: return
-        self.create_system()
+        if not exists: self.create_system()
+        table = self.get_table("migratore")
+        table.ensure_column("uuid", type = "string", index = True)
+        table.ensure_column("timestamp", type = "integer", index = True)
+        table.ensure_column("name", type = "string", index = True)
+        table.ensure_column("description", type = "text")
+        table.ensure_column("result", type = "string", index = True)
+        table.ensure_column("error", type = "text")
+        table.ensure_column("traceback", type = "text")
+        table.ensure_column("operator", type = "text")
+        table.ensure_column("operation", type = "text")
+        table.ensure_column("start", type = "integer", index = True)
+        table.ensure_column("end", type = "integer", index = True)
+        table.ensure_column("duration", type = "integer", index = True)
+        table.ensure_column("start_s", type = "string")
+        table.ensure_column("end_s", type = "string")
 
     def create_system(self):
         table = self.create_table("migratore")
@@ -493,6 +507,11 @@ class Table(Console):
                 else: buffer.write(", ")
                 order_s = " ".join(order)
                 buffer.write(order_s)
+
+    def ensure_column(self, name, type = "integer", index = False):
+        names = self.owner.names_table(self.name)
+        if name in names: return
+        self.add_column(name, type = type, index = index)
 
     def add_column(self, name, type = "integer", index = False):
         buffer = self.owner._buffer()
