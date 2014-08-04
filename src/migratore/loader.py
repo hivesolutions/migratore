@@ -10,9 +10,14 @@ class Loader(object):
 
     def __init__(self):
         self.migrations = []
+        self.migrations_m = {}
 
     def load(self):
         return self.migrations
+
+    def rebuild(self, id, *args, **kwargs):
+        migration = self.migrations_m[id]
+        migration.start(operation = "partial")
 
     def upgrade(self, *args, **kwargs):
         migrations = self.load()
@@ -58,7 +63,9 @@ class DirectoryLoader(Loader):
         for module in modules:
             if not hasattr(module, "migration"): continue
             migration = getattr(module, "migration")
+            instance = migration()
             self.migrations.append(migration)
+            self.migrations_m[instance.id] = migration
 
         self.migrations.sort()
         return self.migrations
