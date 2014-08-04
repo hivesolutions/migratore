@@ -263,6 +263,9 @@ class Database(Console):
     def ensure_system(self):
         exists = self.exists_table("migratore")
         if not exists: self.create_system()
+        self.ensure_system_c()
+
+    def ensure_system_c(self):
         table = self.get_table("migratore")
         table.ensure_column("uuid", type = "string", index = True)
         table.ensure_column("timestamp", type = "integer", index = True)
@@ -280,21 +283,8 @@ class Database(Console):
         table.ensure_column("end_s", type = "string")
 
     def create_system(self):
-        table = self.create_table("migratore")
-        table.add_column("uuid", type = "string", index = True)
-        table.add_column("timestamp", type = "integer", index = True)
-        table.add_column("name", type = "string", index = True)
-        table.add_column("description", type = "text")
-        table.add_column("result", type = "string", index = True)
-        table.add_column("error", type = "text")
-        table.add_column("traceback", type = "text")
-        table.add_column("operator", type = "text")
-        table.add_column("operation", type = "text")
-        table.add_column("start", type = "integer", index = True)
-        table.add_column("end", type = "integer", index = True)
-        table.add_column("duration", type = "integer", index = True)
-        table.add_column("start_s", type = "string")
-        table.add_column("end_s", type = "string")
+        self.create_table("migratore")
+        self.ensure_system_c()
 
     def create_table(self, name):
         id_name = self.config["id_name"]
