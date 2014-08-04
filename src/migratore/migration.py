@@ -80,7 +80,7 @@ class Migration(base.Console):
         path = "."
         path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
-        _loader.partial(id, *args, **kwargs)
+        _loader.rebuild(id, *args, **kwargs)
 
     @classmethod
     def upgrade(self, path = None, *args, **kwargs):
