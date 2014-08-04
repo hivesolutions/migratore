@@ -35,6 +35,7 @@ VALID_TYPES = dict(
     USERNAME = str,
     PASSWORD = str,
     DB = str,
+    FS = str,
     DEBUG = int
 )
 """ The dictionary defining the names and the expected data types
