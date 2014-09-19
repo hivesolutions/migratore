@@ -327,7 +327,6 @@ class Database(Console):
 
     def create_relation(self, name, *fields):
         id_type = self.config["id_type"]
-        fields.sort()
         buffer = self._buffer()
         buffer.write("create table ")
         buffer.write(name)
@@ -347,9 +346,10 @@ class Database(Console):
             else: buffer.write(", ")
             buffer.write(field)
         buffer.write(")")
+        buffer.write(")")
         buffer.execute()
         table = self.table(self, name)
-        for field in fields: table.index_column(field)
+        for field in fields: table.index_column(field, types = ("hash",))
         return table
 
     def _debug(self, message, title = None):
@@ -550,9 +550,8 @@ class Table(Console):
         buffer.write(name)
         buffer.execute()
 
-    def index_column(self, name):
-        self.create_index(name, type = "hash")
-        self.create_index(name, type = "btree")
+    def index_column(self, name, types = ("hash", "btree")):
+        for type in types: self.create_index(name, type = type)
 
     def create_index(self, name, type = "hash"):
         pass
