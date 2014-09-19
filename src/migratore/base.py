@@ -325,6 +325,33 @@ class Database(Console):
     def names_table(self, name):
         raise RuntimeError("Not implemented")
 
+    def create_relation(self, name, *fields):
+        id_type = self.config["id_type"]
+        fields.sort()
+        buffer = self._buffer()
+        buffer.write("create table ")
+        buffer.write(name)
+        buffer.write("(")
+        is_first = True
+        for field in fields:
+            if is_first: is_first = False
+            else: buffer.write(", ")
+            buffer.write(field)
+            buffer.write(" ")
+            buffer.write_type(id_type)
+        buffer.write(", ")
+        buffer.write("constraint %s_pk primary key(" % name)
+        is_first = True
+        for field in fields:
+            if is_first: is_first = False
+            else: buffer.write(", ")
+            buffer.write(field)
+        buffer.write(")")
+        buffer.execute()
+        table = self.table(self, name)
+        for field in fields: table.index_column(field)
+        return table
+
     def _debug(self, message, title = None):
         if not self.debug: return
         message = self._format(message, title)
@@ -380,7 +407,7 @@ class Database(Console):
 
 class Table(Console):
 
-    def __init__(self, owner, name, identifier):
+    def __init__(self, owner, name, identifier = None):
         self.owner = owner
         self.name = name
         self.identifier = identifier
