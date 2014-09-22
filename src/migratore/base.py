@@ -526,12 +526,24 @@ class Table(Console):
                 order_s = " ".join(order)
                 buffer.write(order_s)
 
-    def ensure_column(self, name, type = "integer", index = False):
+    def ensure_column(
+        self,
+        name,
+        type = "integer",
+        index = False,
+        types = ("hash", "btree")
+    ):
         names = self.owner.names_table(self.name)
         if name in names: return
-        self.add_column(name, type = type, index = index)
+        self.add_column(name, type = type, index = index, types = types)
 
-    def add_column(self, name, type = "integer", index = False):
+    def add_column(
+        self,
+        name,
+        type = "integer",
+        index = False,
+        types = ("hash", "btree")
+    ):
         buffer = self.owner._buffer()
         buffer.write("alter table ")
         buffer.write(self.name)
@@ -540,9 +552,18 @@ class Table(Console):
         buffer.write(" ")
         buffer.write_type(type)
         buffer.execute()
-        if index: self.index_column(name)
+        if index: self.index_column(name, types = types)
 
-    def remove_column(self, name, index = False):
+    def add_foreign(
+        self,
+        name,
+        type = "integer",
+        index = True,
+        types = ("hash",)
+    ):
+        self.add_column(name, type = type, index = index, types = types)
+
+    def remove_column(self, name):
         buffer = self.owner._buffer()
         buffer.write("alter table ")
         buffer.write(self.name)
