@@ -210,10 +210,21 @@ class Database(Console):
         self.types_map = dict(SQL_TYPES_MAP)
         self._apply_types()
 
-    def execute(self, query, fetch = True):
+    def execute(self, query, fetch = True, encoding = "utf-8"):
         # debugs some information to the standard output this
         # may be useful for debugging purposes
         self._debug(query, title = self.engine)
+
+        # verifies that the data type of the query string is
+        # the expected one, if that's not the case raises an
+        # exception as problems would occur otherwise
+        if not type(query) == legacy.UNICODE:
+            raise RuntimeError("Invalid query encoding")
+
+        # in case the encoding parameter is defined encodes the
+        # provided query string into a proper bytes string using
+        # the provided encoding value for the encoding
+        if encoding: query = query.encode(encoding)
 
         # creates a new cursor using the current connection
         # this cursor is going to be used for the execution
