@@ -12,10 +12,10 @@ from . import loader
 
 class Migration(base.Console):
 
-    def __init__(self):
-        self.uuid = None
-        self.timestamp = None
-        self.description = None
+    def __init__(self, uuid = None, timestamp = None, description = None):
+        self.uuid = uuid
+        self.timestamp = timestamp
+        self.description = description
 
     def __cmp__(self, value):
         return self.timestamp.__cmp__(value.timestamp)
