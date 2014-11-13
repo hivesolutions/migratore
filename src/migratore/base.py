@@ -214,9 +214,10 @@ class Database(Console):
 
     def execute(self, query, fetch = True, encoding = "utf-8"):
         # ensures that the provided query string is encoded as
-        # an unicode string, note that any special encoding is
-        # ignored as only the default strategy is applied
-        query = legacy.UNICODE(query)
+        # an unicode string, note that the encoding to be used
+        # is the one provided for the next encoding operation
+        is_unicode = type(query) == legacy.UNICODE
+        if not is_unicode: query = query.decode(encoding)
 
         # debugs some information to the standard output this
         # may be useful for debugging purposes
