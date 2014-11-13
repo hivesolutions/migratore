@@ -179,7 +179,7 @@ class Migration(base.Console):
 
         method = getattr(self, operation)
         try: method(db)
-        except BaseException, exception:
+        except BaseException as exception:
             db.rollback()
             lines = traceback.format_exc().splitlines()
             lines_s = "\n".join(lines)
