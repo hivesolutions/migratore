@@ -124,6 +124,7 @@ class Migratore(object):
         password = kwargs.get("password", "root")
         name = kwargs.get("db", "default")
         isolation = kwargs.get("isolation", "read committed")
+        charset = kwargs.get("charset", "utf8")
         connection = MySQLdb.connect(
             host,
             port = port,
@@ -131,6 +132,7 @@ class Migratore(object):
             passwd = password,
             db = name
         )
+        connection.set_character_set(charset)
         database = mysql.MySQLDatabase(connection, name)
         database.execute("set session transaction isolation level %s" % isolation)
         return database
