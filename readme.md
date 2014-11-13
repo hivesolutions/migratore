@@ -42,6 +42,10 @@ table = database.get_table("users")
 table.add_column("username", type = "text")
 ```
 
+## License
+
+Migratore is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
+
 ## Build Automation
 
 [![Build Status](https://travis-ci.org/hivesolutions/migratore.png?branch=master)](https://travis-ci.org/hivesolutions/migratore)
