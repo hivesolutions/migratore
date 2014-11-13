@@ -20,6 +20,24 @@ class Migration(base.Console):
     def __cmp__(self, value):
         return self.timestamp.__cmp__(value.timestamp)
 
+    def __lt__(self, value):
+        return self.timestamp.__lt__(value.timestamp)
+
+    def __gt__(self, value):
+        return self.timestamp.__gt__(value.timestamp)
+
+    def __eq__(self, value):
+        return self.timestamp.__eq__(value.timestamp)
+
+    def __le__(self, value):
+        return self.timestamp.__le__(value.timestamp)
+
+    def __ge__(self, value):
+        return self.timestamp.__ge__(value.timestamp)
+
+    def __ne__(self, value):
+        return self.timestamp.__ne__(value.timestamp)
+
     @classmethod
     def environ(cls):
         args = list()
