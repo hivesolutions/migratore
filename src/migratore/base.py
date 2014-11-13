@@ -99,12 +99,12 @@ class Migratore(object):
     def echo_map(cls, map):
         largest = 0
 
-        for key in map.iterkeys():
+        for key in legacy.iterkeys(map):
             key_l = len(key)
             if not key_l > largest: continue
             largest = key_l
 
-        for key, value in map.iteritems():
+        for key, value in legacy.iteritems(map):
             key_l = len(key)
             value_s = str(value)
             remaining = largest - key_l
@@ -137,7 +137,7 @@ class Migratore(object):
 
     @classmethod
     def _environ(cls, args, kwargs):
-        for key, value in os.environ.iteritems():
+        for key, value in legacy.iteritems(os.environ):
             key = ALIAS.get(key, key)
             if not key in VALID_TYPES: continue
             _type = VALID_TYPES[key]
@@ -398,8 +398,6 @@ class Database(Console):
         if value_t == type(None): return "null"
         if not value_t in legacy.STRINGS: return str(value)
 
-        if value_t == legacy.UNICODE: value = value.encode("utf-8")
-
         value = value.replace("'", "''")
         value = value.replace("\\", "\\\\")
         value = value.replace("\"", "\"\"")
@@ -657,7 +655,7 @@ class Table(Console):
 
         is_first = True
 
-        for key, value in kwargs.iteritems():
+        for key, value in legacy.iteritems(kwargs):
             if is_first: is_first = False
             else: buffer.write(", ")
             buffer.write(key)
@@ -671,14 +669,14 @@ class Table(Console):
 
         is_first = True
 
-        names = kwargs.keys()
+        names = legacy.keys(kwargs)
         names_s = ", ".join(names)
 
         buffer.write("(")
         buffer.write(names_s)
         buffer.write(") values(")
 
-        for value in kwargs.values():
+        for value in legacy.values(kwargs):
             if is_first: is_first = False
             else: buffer.write(", ")
             buffer.write_value(value)
@@ -692,7 +690,7 @@ class Table(Console):
 
         is_first = True
 
-        for key, value in kwargs.iteritems():
+        for key, value in legacy.iteritems(kwargs):
             if is_first: is_first = False
             else: buffer.write(" and ")
             buffer.write(key)
