@@ -4,13 +4,16 @@
 import os
 import sys
 
-import base
+from migratore import base
 
 class Loader(object):
 
     def __init__(self):
         self.migrations = []
         self.migrations_m = {}
+
+    def __cmp__(self, value):
+        return self.timestamp.__cmp__(value.timestamp)
 
     def load(self):
         return self.migrations
@@ -34,9 +37,6 @@ class Loader(object):
         self.load()
         migration = self.migrations_m[id]
         migration.start(operation = "partial")
-
-    def cmp(self, first, second):
-        return cmp(first.timestamp, second.timestamp)
 
 class DirectoryLoader(Loader):
 
@@ -68,5 +68,5 @@ class DirectoryLoader(Loader):
             self.migrations_m[migration.uuid] = migration
             self.migrations_m[str(migration.timestamp)] = migration
 
-        self.migrations.sort()
+        self.migrations.sort(key = lambda item: item.timestamp)
         return self.migrations

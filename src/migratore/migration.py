@@ -7,8 +7,8 @@ import time
 import datetime
 import traceback
 
-import base
-import loader
+from migratore import base
+from migratore import loader
 
 class Migration(base.Console):
 
@@ -18,7 +18,7 @@ class Migration(base.Console):
         self.description = None
 
     def __cmp__(self, value):
-        return cmp(self.timestamp, value.timestamp)
+        return self.timestamp.__cmp__(value.timestamp)
 
     @classmethod
     def environ(cls):

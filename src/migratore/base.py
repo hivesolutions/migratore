@@ -3,8 +3,8 @@
 
 import os
 import sys
-import types
-import StringIO
+
+import legacy
 
 ITER_SIZE = 10
 """ The size to be used as reference for each iteration meaning
@@ -23,8 +23,8 @@ the base value to the target value, this is required so that new
 names are allowed to be used and legacy support is provided """
 
 SEQUENCE_TYPES = (
-    types.ListType,
-    types.TupleType
+    list,
+    tuple
 )
 """ The tuple defining the various data types that are considered
 to be representing sequences under the python language """
@@ -109,7 +109,7 @@ class Migratore(object):
             value_s = str(value)
             remaining = largest - key_l
             cls.echo(key, nl = False)
-            for _index in xrange(remaining):
+            for _index in legacy.xrange(remaining):
                 cls.echo(" ", nl = False)
             cls.echo(" : ", nl = False)
             cls.echo(value_s)
@@ -306,6 +306,7 @@ class Database(Console):
         return table
 
     def drop_table(self, name):
+        buffer = self._buffer()
         buffer.write("drop table ")
         buffer.write(name)
         buffer.execute()
@@ -355,7 +356,7 @@ class Database(Console):
     def _debug(self, message, title = None):
         if not self.debug: return
         message = self._format(message, title)
-        print >> sys.stderr, message
+        sys.stderr.write(message + "\n")
 
     def _format(self, message, title):
         if title: message = "[%s] %s" % (title, message)
@@ -365,7 +366,7 @@ class Database(Console):
         pass
 
     def _buffer(self):
-        buffer = StringIO.StringIO()
+        buffer = legacy.StringIO()
 
         def write_type(type):
             type_s = self._type(type)
@@ -394,10 +395,10 @@ class Database(Console):
     def _escape(self, value):
         value_t = type(value)
 
-        if value_t == types.NoneType: return "null"
-        if not value_t in types.StringTypes: return str(value)
+        if value_t == type(None): return "null"
+        if not value_t in legacy.STRINGS: return str(value)
 
-        if value_t == types.UnicodeType: value = value.encode("utf-8")
+        if value_t == legacy.UNICODE: value = value.encode("utf-8")
 
         value = value.replace("'", "''")
         value = value.replace("\\", "\\\\")

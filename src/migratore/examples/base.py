@@ -25,9 +25,9 @@ def update(db):
 
 def select(db):
     table = db.get_table("users")
-    print table.count()
-    print table.select(("object_id", "username"), username = "new-0")
-    print table.get("object_id", username = "new-0", object_id = 0)
+    print(table.count())
+    print(table.select(("object_id", "username"), username = "new-0"))
+    print(table.get("object_id", username = "new-0", object_id = 0))
 
 if __name__ == "__main__":
     file_path = os.path.abspath(__file__)
