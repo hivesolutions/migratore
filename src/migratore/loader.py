@@ -4,7 +4,7 @@
 import os
 import sys
 
-from migratore import base
+from . import base
 
 class Loader(object):
 

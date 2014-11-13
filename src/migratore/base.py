@@ -116,7 +116,7 @@ class Migratore(object):
 
     @classmethod
     def _get_mysql(cls, *args, **kwargs):
-        from migratore import mysql
+        from . import mysql
         import MySQLdb
         host = kwargs.get("host", "localhost")
         port = kwargs.get("port", 3306)

@@ -3,8 +3,8 @@
 
 import sys
 
-from migratore import info
-from migratore import migration
+from . import info
+from . import migration
 
 def run_help():
     print("%s %s (%s)" % (info.NAME, info.VERSION, info.AUTHOR))

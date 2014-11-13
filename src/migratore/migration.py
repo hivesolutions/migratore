@@ -7,8 +7,8 @@ import time
 import datetime
 import traceback
 
-from migratore import base
-from migratore import loader
+from . import base
+from . import loader
 
 class Migration(base.Console):
 

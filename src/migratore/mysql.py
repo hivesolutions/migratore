@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from migratore import base
+from . import base
 
 class MySQLDatabase(base.Database):
 
