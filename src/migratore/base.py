@@ -399,12 +399,13 @@ class Database(Console):
             value = buffer.getvalue()
             is_unicode = type(value) == legacy.UNICODE
             if is_unicode: return value
-            return value.encode("utf-8")
+            return value.decode("utf-8")
 
         def execute(fetch = False):
             query = buffer.join()
             return self.execute(query, fetch = fetch)
 
+        buffer.write = write
         buffer.write_type = write_type
         buffer.write_value = write_value
         buffer.join = join
