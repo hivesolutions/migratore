@@ -27,6 +27,7 @@ setuptools.setup(
         "migratore.examples",
         "migratore.examples.migrations"
     ],
+    test_suite = "migratore.test",
     package_dir = {
         "" : os.path.normpath("src")
     },
@@ -44,7 +45,7 @@ setuptools.setup(
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
-        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
