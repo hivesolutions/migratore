@@ -213,15 +213,14 @@ class Database(Console):
         self._apply_types()
 
     def execute(self, query, fetch = True, encoding = "utf-8"):
+        # ensures that the provided query string is encoded as
+        # an unicode string, note that any special encoding is
+        # ignored as only the default strategy is applied
+        query = legacy.UNICODE(query)
+
         # debugs some information to the standard output this
         # may be useful for debugging purposes
         self._debug(query, title = self.engine)
-
-        # verifies that the data type of the query string is
-        # the expected one, if that's not the case raises an
-        # exception as problems would occur otherwise
-        if not type(query) == legacy.UNICODE:
-            raise RuntimeError("Invalid query encoding")
 
         # in case the encoding parameter is defined encodes the
         # provided query string into a proper bytes string using
@@ -380,6 +379,12 @@ class Database(Console):
 
     def _buffer(self):
         buffer = legacy.StringIO()
+        _write = buffer.write
+
+        def write(value):
+            is_bytes = type(value) == legacy.BYTES
+            if is_bytes: value = value.decode("utf-8")
+            _write(value)
 
         def write_type(type):
             type_s = self._type(type)
