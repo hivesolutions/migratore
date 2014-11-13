@@ -390,7 +390,10 @@ class Database(Console):
             buffer.write(value_s)
 
         def join():
-            return buffer.getvalue()
+            value = buffer.getvalue()
+            is_unicode = type(value) == legacy.UNICODE
+            if is_unicode: return value
+            return value.encode("utf-8")
 
         def execute(fetch = False):
             query = buffer.join()
