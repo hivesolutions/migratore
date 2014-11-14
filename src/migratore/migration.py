@@ -130,12 +130,16 @@ class Migration(base.Console):
         base.Migratore.echo("Migration file '%s' generated" % path)
 
     @classmethod
-    def template(cls, path, *args):
+    def template(cls, path, *args, **kwargs):
+        encoding = kwargs.get("encoding", "utf-8")
+
         file = open(path, "rb")
         try: contents = file.read()
         finally: file.close()
 
-        return contents % args
+        contents = contents.decode(encoding)
+        result = contents % args
+        return result.encode(encoding)
 
     @classmethod
     def _time_s(cls, timestamp):
