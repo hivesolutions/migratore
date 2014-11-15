@@ -27,7 +27,7 @@ SEQUENCE_TYPES = (
     tuple
 )
 """ The tuple defining the various data types that are considered
-to be representing sequences under the python language """
+to be representing sequence structures under the python language """
 
 VALID_TYPES = dict(
     HOST = str,
