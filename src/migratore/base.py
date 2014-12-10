@@ -88,6 +88,8 @@ class Migratore(object):
     def get_fs(cls, *args, **kwargs):
         cls._environ(args, kwargs)
         fs = kwargs.get("fs", "")
+        fs = os.path.abspath(fs)
+        fs = os.path.normpath(fs)
         return fs
 
     @classmethod
