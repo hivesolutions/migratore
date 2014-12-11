@@ -1,4 +1,4 @@
-# [Migratore](http://migratore.hive.pt)
+# [![Migratore](res/logo.png)](http://migratore.hive.pt)
 
 Simple migration framework / infra-structure for SQL based databases.
 
