@@ -258,8 +258,8 @@ class Database(Console):
     def close(self):
         self.connection.commit()
 
-    def rollback (self):
-        self.connection.rollback ()
+    def rollback(self):
+        self.connection.rollback()
 
     def commit(self):
         self.connection.commit()
