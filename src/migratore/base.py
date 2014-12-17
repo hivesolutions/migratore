@@ -742,3 +742,12 @@ class Result(dict):
             self.identifier : value
         }
         self.owner.update(kwargs, **_kwargs)
+
+    def join(self, table_name):
+        value = self[self.identifier]
+        db = self.owner.owner
+        table = db.get_table(table_name)
+        kwargs = {
+            self.identifier : value
+        }
+        return table.get(**kwargs)
