@@ -40,7 +40,8 @@ setuptools.setup(
         ]
     },
     install_requires = [
-        "legacy"
+        "legacy",
+        "mysql-python"
     ],
     classifiers = [
         "Development Status :: 5 - Production/Stable",
