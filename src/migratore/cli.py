@@ -13,6 +13,7 @@ def run_help():
     print("  environ         Displays the current environment in the standard output")
     print("  list            Lists the executed migrations on the current database")
     print("  errors          Lists the various errors from migration of the database")
+    print("  mark            Marks the associated data source with the current timestamp")
     print("  trace [id]      Prints the traceback for the error execution with the provided id")
     print("  rebuild [id]    Run the partial execution of the migration with the given id")
     print("  upgrade [path]  Executes the pending migrations using the defined directory or current")
@@ -29,6 +30,9 @@ def run_list():
 
 def run_errors():
     migration.Migration.errors()
+
+def run_mark():
+    migration.Migration.mark()
 
 def run_trace(id):
     migration.Migration.trace(id)

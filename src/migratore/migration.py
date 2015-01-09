@@ -83,6 +83,14 @@ class Migration(base.Console):
         finally: db.close()
 
     @classmethod
+    def mark(self, *args, **kwargs):
+        db = base.Migratore.get_db(*args, **kwargs)
+        timestamp = db.timestamp()
+        timestamp = timestamp or 0
+        migration = MarkMigration()
+        migration.start()
+
+    @classmethod
     def trace(cls, id):
         object_id = int(id)
         db = base.Migratore.get_db()
@@ -240,3 +248,11 @@ class Migration(base.Console):
         db.commit()
 
         return result
+
+class MarkMigration(Migration):
+
+    def __init__(self):
+        Migration.__init__(self)
+        self.uuid = "da023aab-736d-40a6-8e9b-c6175c1241f5"
+        self.timestamp = int(time.time())
+        self.description = "marks the initial stage of the data source"
