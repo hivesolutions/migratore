@@ -256,3 +256,10 @@ class MarkMigration(Migration):
         self.uuid = "da023aab-736d-40a6-8e9b-c6175c1241f5"
         self.timestamp = int(time.time())
         self.description = "marks the initial stage of the data source"
+
+    def start(self, *args, **kwargs):
+        db = base.Migratore.get_db()
+        table = db.get_table("migratore")
+        count = table.count(result = "success")
+        if count > 0: return
+        return Migration.start(self, *args, **kwargs)
