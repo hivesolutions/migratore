@@ -54,6 +54,7 @@ class MySQLTable(base.Table):
 
     def create_index(self, name, type = "hash"):
         index = "%s_%s_%s" % (self.name, name, type)
+        index = index[-64:]
         buffer = self.owner._buffer()
         buffer.write("create index ")
         buffer.write(index)
@@ -67,6 +68,7 @@ class MySQLTable(base.Table):
 
     def drop_index(self, name):
         index = "%s_%s_%s" % (self.name, name, type)
+        index = index[-64:]
         buffer = self.owner._buffer()
         buffer.write("drop index ")
         buffer.write(index)
