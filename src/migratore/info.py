@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 NAME = "migratore"
-VERSION = "0.3.11"
+VERSION = "0.3.12"
 AUTHOR = "Hive Solutions Lda."
 EMAIL = "development@hive.pt"
 DESCRIPTION = "Migratore Infra-structure"
