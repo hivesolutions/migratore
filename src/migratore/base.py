@@ -596,6 +596,19 @@ class Table(Console):
         buffer.write(name)
         buffer.execute()
 
+    def change_column(self, name, new_name, type = None):
+        buffer = self.owner._buffer()
+        buffer.write("alter table ")
+        buffer.write(self.name)
+        buffer.write(" change ")
+        buffer.write(name)
+        buffer.write(" ")
+        buffer.write(new_name)
+        if type:
+            buffer.write(" ")
+            buffer.write_type(type)
+        buffer.execute()
+
     def index_column(self, name, types = ("hash", "btree")):
         for type in types: self.create_index(name, type = type)
 
