@@ -128,14 +128,12 @@ class Migratore(object):
         name = kwargs.get("db", "default")
         isolation = kwargs.get("isolation", "read committed")
         charset = kwargs.get("charset", "utf8")
-        kwargs = dict()
-        if password: kwargs["passwd"] = password
         connection = MySQLdb.connect(
             host,
             port = port,
             user = username,
-            db = name,
-            **kwargs
+            passwd = password,
+            db = name
         )
         connection.set_character_set(charset)
         database = mysql.MySQLDatabase(connection, name)
