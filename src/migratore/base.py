@@ -120,7 +120,8 @@ class Migratore(object):
     @classmethod
     def _get_mysql(cls, *args, **kwargs):
         from . import mysql
-        import MySQLdb
+        try: import MySQLdb
+        except: import pymysql; MySQLdb = pymysql
         host = kwargs.get("host", "localhost")
         port = kwargs.get("port", 3306)
         username = kwargs.get("username", "root")
