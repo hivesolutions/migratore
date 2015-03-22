@@ -24,3 +24,7 @@ class BaseTest(unittest.TestCase):
 
         self.assertEqual(db.exists_table("users"), True)
         self.assertEqual(db.exists_table("users_extra"), False)
+        self.assertEqual(table.has_column("username"), True)
+        self.assertEqual(table.has_column("password"), True)
+        self.assertEqual(table.type_column("username"), "varchar")
+        self.assertEqual(table.type_column("password"), "varchar")

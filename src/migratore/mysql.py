@@ -75,3 +75,32 @@ class MySQLTable(base.Table):
         buffer.write(" on ")
         buffer.write(self.name)
         buffer.execute()
+
+    def has_column(self, name):
+        buffer = self._buffer()
+        buffer.write("select count(*) ")
+        buffer.write("from information_schema.tables where table_schema = '")
+        buffer.write(self.owner.name)
+        buffer.write("' and table_name = '")
+        buffer.write(self.name)
+        buffer.write("'")
+        buffer.write("' and column_name = '")
+        buffer.write(name)
+        buffer.write("'")
+        counts = buffer.execute(fetch = True)
+        exists = True if counts and counts[0][0] > 0 else False
+        return exists
+
+    def type_colum(self, name):
+        buffer = self._buffer()
+        buffer.write("select data_type ")
+        buffer.write("from information_schema.tables where table_schema = '")
+        buffer.write(self.owner.name)
+        buffer.write("' and table_name = '")
+        buffer.write(self.name)
+        buffer.write("'")
+        buffer.write("' and column_name = '")
+        buffer.write(name)
+        buffer.write("'")
+        result = buffer.execute(fetch = True)
+        return result[0][0]
