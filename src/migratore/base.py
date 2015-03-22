@@ -132,7 +132,7 @@ class Migratore(object):
             host,
             port = port,
             user = username,
-            passwd = password,
+            passwd = password or None,
             db = name
         )
         connection.set_character_set(charset)
