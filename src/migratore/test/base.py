@@ -26,5 +26,6 @@ class BaseTest(unittest.TestCase):
     def _get_db(self):
         try: db = migratore.Migratore.get_db()
         except: db = None
-        if not db: self.skip("Not possible to access db")
+        is_skip = not db and hasattr(self, "skipTest")
+        if is_skip: self.skipTest("Not possible to access db")
         return db
