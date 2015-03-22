@@ -77,7 +77,7 @@ class MySQLTable(base.Table):
         buffer.execute()
 
     def has_column(self, name):
-        buffer = self._buffer()
+        buffer = self.owner._buffer()
         buffer.write("select count(*) ")
         buffer.write("from information_schema.tables where table_schema = '")
         buffer.write(self.owner.name)
@@ -92,7 +92,7 @@ class MySQLTable(base.Table):
         return exists
 
     def type_colum(self, name):
-        buffer = self._buffer()
+        buffer = self.owner._buffer()
         buffer.write("select data_type ")
         buffer.write("from information_schema.tables where table_schema = '")
         buffer.write(self.owner.name)
