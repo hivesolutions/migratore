@@ -10,6 +10,7 @@ python:
   - "pypy3"
 install:
   - pip install -r requirements.txt
+  - pip install MySQLdb
   - pip install coveralls
 env: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=travis DB_PASSWORD=
 before_script: mysql -e "create database migratore_test;"
