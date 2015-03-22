@@ -90,7 +90,7 @@ class MySQLTable(base.Table):
         exists = True if counts and counts[0][0] > 0 else False
         return exists
 
-    def type_colum(self, name):
+    def type_column(self, name):
         buffer = self.owner._buffer()
         buffer.write("select data_type ")
         buffer.write("from information_schema.columns where table_schema = '")
