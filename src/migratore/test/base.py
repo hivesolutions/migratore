@@ -21,3 +21,6 @@ class BaseTest(unittest.TestCase):
         table = db.create_table("users")
         table.add_column("username", type = "text")
         table.add_column("password", type = "text")
+
+        self.assertEqual(db.exists_table("users"), True)
+        self.assertEqual(db.exists_table("users_extra"), False)
