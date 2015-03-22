@@ -136,7 +136,8 @@ class Migratore(object):
             passwd = password,
             db = name
         )
-        connection.set_character_set(charset)
+        has_charset = hasattr(connection, "set_character_set")
+        if has_charset: connection.set_character_set(charset)
         database = mysql.MySQLDatabase(connection, name)
         database.execute("set session transaction isolation level %s" % isolation)
         return database
