@@ -129,7 +129,7 @@ class Migratore(object):
         isolation = kwargs.get("isolation", "read committed")
         charset = kwargs.get("charset", "utf8")
         kwargs = dict()
-        if password: kwargs["password"] = password
+        if password: kwargs["passwd"] = password
         connection = MySQLdb.connect(
             host,
             port = port,
