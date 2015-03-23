@@ -637,7 +637,8 @@ class Table(Console):
         buffer.write(name)
         buffer.execute()
 
-    def change_column(self, name, new_name, type = None):
+    def change_column(self, name, new_name = None, type = None):
+        if not new_name: new_name = name
         buffer = self.owner._buffer()
         buffer.write("alter table ")
         buffer.write(self.name)
