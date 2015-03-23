@@ -39,7 +39,7 @@ class BaseTest(unittest.TestCase):
         table = db.create_table("users")
         table.add_column("username", type = "text")
         table.add_column("height", type = "float")
-        table.insert(username = "32", height = 42.22)
+        table.insert(username = "11", height = 42.42)
         table.change_column("username", "username_rename", type = "integer")
         table.change_column("height", "height_rename", type = "integer")
 
@@ -51,10 +51,10 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(table.type_column("height_rename"), "int")
 
         table = db.get_table("users")
-        result = table.select(username_rename = 32)
+        result = table.select(username_rename = 11)
         self.assertNotEqual(len(result), 0)
         self.assertNotEqual(result[0], None)
-        self.assertEqual(result[0]["username_rename"], 32)
+        self.assertEqual(result[0]["username_rename"], 11)
         self.assertEqual(result[0]["height_rename"], 42)
         self.assertEqual(type(result[0]["username_rename"]), long)
         self.assertEqual(type(result[0]["height_rename"]), long)
