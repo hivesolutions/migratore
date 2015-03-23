@@ -46,7 +46,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(table.type_column("username_rename"), "int")
 
         table = db.get_table("users")
-        result = table.select(username = 32)
+        result = table.select(username_rename = 32)
         self.assertNotEqual(len(result), 0)
         self.assertNotEqual(result[0], None)
-        self.assertEqual(result[0]["username"], 32)
+        self.assertEqual(result[0]["username_rename"], 32)
