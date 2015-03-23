@@ -42,4 +42,4 @@ class BaseTest(unittest.TestCase):
 
         self.assertEqual(table.has_column("username"), False)
         self.assertEqual(table.has_column("username_rename"), True)
-        self.assertEqual(table.type_column("username_rename"), "integer")
+        self.assertEqual(table.type_column("username_rename"), "int")
