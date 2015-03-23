@@ -56,5 +56,5 @@ class BaseTest(unittest.TestCase):
         self.assertNotEqual(result[0], None)
         self.assertEqual(result[0]["username_rename"], 11)
         self.assertEqual(result[0]["height_rename"], 43)
-        self.assertIn(type(result[0]["username_rename"]), (int, long))
-        self.assertIn(type(result[0]["height_rename"]), (int, long))
+        self.assertIn(type(result[0]["username_rename"]), (int, legacy.LONG))
+        self.assertIn(type(result[0]["height_rename"]), (int, legacy.LONG))
