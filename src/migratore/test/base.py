@@ -38,4 +38,8 @@ class BaseTest(unittest.TestCase):
         db = migratore.Migratore.get_test()
         table = db.create_table("users")
         table.add_column("username", type = "text")
-        table.add_column("password", type = "text")
+        table.change_column("username", "username_rename", type = "integer")
+
+        self.assertEqual(table.has_column("username"), False)
+        self.assertEqual(table.has_column("username_rename"), True)
+        self.assertEqual(table.type_column("username_rename"), "integer")
