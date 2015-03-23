@@ -14,7 +14,7 @@ class BaseTest(unittest.TestCase):
         db.clear()
 
     def test_buffer(self):
-        db = migratore.Database(None, None)
+        db = migratore.Database()
         buffer = db._buffer()
         buffer.write("select * from dummy")
         result = buffer.join()

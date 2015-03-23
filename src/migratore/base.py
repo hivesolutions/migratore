@@ -209,9 +209,9 @@ class Database(Console):
 
     def __init__(
         self,
-        owner,
-        connection,
-        name,
+        owner = None,
+        connection = None,
+        name = None,
         debug = False,
         config = DEFAULT_CONFIG
     ):
