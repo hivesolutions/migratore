@@ -267,6 +267,22 @@ class Database(Console):
     def commit(self):
         self.connection.commit()
 
+    def create(self):
+        buffer = self._buffer()
+        buffer.write("create database ")
+        buffer.write(self.name)
+        buffer.execute()
+
+    def drop(self):
+        buffer = self._buffer()
+        buffer.write("drop database ")
+        buffer.write(self.name)
+        buffer.execute()
+
+    def clear(self):
+        self.drop()
+        self.create()
+
     def table(self, *args, **kwargs):
         return Table(*args, **kwargs)
 

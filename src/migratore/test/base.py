@@ -7,6 +7,11 @@ import unittest
 import migratore
 
 class BaseTest(unittest.TestCase):
+    
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        db = migratore.Migratore.get_db()
+        db.clear()
 
     def test_buffer(self):
         db = migratore.Database(None, None)
@@ -28,3 +33,9 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(table.has_column("password"), True)
         self.assertEqual(table.type_column("username"), "longtext")
         self.assertEqual(table.type_column("password"), "longtext")
+
+    def test_rename(self):
+        db = migratore.Migratore.get_db()
+        table = db.create_table("users")
+        table.add_column("username", type = "text")
+        table.add_column("password", type = "text")
