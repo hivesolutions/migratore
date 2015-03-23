@@ -39,7 +39,7 @@ class BaseTest(unittest.TestCase):
         table = db.create_table("users")
         table.add_column("username", type = "text")
         table.add_column("height", type = "float")
-        table.insert(username = "11", height = 42.42)
+        table.insert(username = "11", height = 42.84)
         table.change_column("username", "username_rename", type = "integer")
         table.change_column("height", "height_rename", type = "integer")
 
