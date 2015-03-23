@@ -20,6 +20,15 @@ class MySQLDatabase(base.Database):
     def table(self, *args, **kwargs):
         return MySQLTable(*args, **kwargs)
 
+    def count_tables(self):
+        buffer = self._buffer()
+        buffer.write("select count(*) ")
+        buffer.write("from information_schema.tables where table_schema = '")
+        buffer.write(self.name)
+        buffer.write("'")
+        counts = buffer.execute(fetch = True)
+        return counts[0][0]
+
     def exists_table(self, name):
         buffer = self._buffer()
         buffer.write("select count(*) ")

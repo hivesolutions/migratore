@@ -86,6 +86,20 @@ class Migratore(object):
         return database
 
     @classmethod
+    def get_test(cls, strict = False, *args, **kwargs):
+        database = cls.get_database(*args, **kwargs)
+        is_test = database.name.endswith("test")
+        is_migratore = database.name.endswith("migratore")
+        if not is_test and not is_migratore: raise RuntimeError(
+            "Test database '%s' is not test compliant" % database.name
+        )
+        table_count = database.count_tables()
+        if strict and not table_count == 0: raise RuntimeError(
+            "Test Database '%s' is not empty" % database.name
+        )
+        return database
+
+    @classmethod
     def get_fs(cls, *args, **kwargs):
         cls._environ(args, kwargs)
         fs = kwargs.get("fs", "")

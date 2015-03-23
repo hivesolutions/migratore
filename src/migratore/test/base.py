@@ -8,9 +8,9 @@ import migratore
 
 class BaseTest(unittest.TestCase):
 
-    def setUp(self):
-        unittest.TestCase.setUp(self)
-        db = migratore.Migratore.get_db()
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        db = migratore.Migratore.get_test(strict = False)
         db.clear()
 
     def test_buffer(self):
@@ -22,7 +22,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(type(result), legacy.UNICODE)
 
     def test_create(self):
-        db = migratore.Migratore.get_db()
+        db = migratore.Migratore.get_test()
         table = db.create_table("users")
         table.add_column("username", type = "text")
         table.add_column("password", type = "text")
@@ -35,7 +35,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(table.type_column("password"), "longtext")
 
     def test_rename(self):
-        db = migratore.Migratore.get_db()
+        db = migratore.Migratore.get_test()
         table = db.create_table("users")
         table.add_column("username", type = "text")
         table.add_column("password", type = "text")
