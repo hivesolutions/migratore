@@ -7,7 +7,7 @@ import unittest
 import migratore
 
 class BaseTest(unittest.TestCase):
-    
+
     def setUp(self):
         unittest.TestCase.setUp(self)
         db = migratore.Migratore.get_db()

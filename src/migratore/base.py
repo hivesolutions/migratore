@@ -118,6 +118,11 @@ class Migratore(object):
             cls.echo(value_s)
 
     @classmethod
+    def invalidate(cls):
+        if not hasattr(cls, "_database"): return
+        cls._database = None
+
+    @classmethod
     def _get_mysql(cls, *args, **kwargs):
         from . import mysql
         try: import MySQLdb
@@ -138,7 +143,7 @@ class Migratore(object):
         )
         has_charset = hasattr(connection, "set_character_set")
         if has_charset: connection.set_character_set(charset)
-        database = mysql.MySQLDatabase(connection, name)
+        database = mysql.MySQLDatabase(self, connection, name)
         database.execute("set session transaction isolation level %s" % isolation)
         return database
 
@@ -204,11 +209,13 @@ class Database(Console):
 
     def __init__(
         self,
+        owner,
         connection,
         name,
         debug = False,
         config = DEFAULT_CONFIG
     ):
+        self.owner = owner
         self.connection = connection
         self.name = name
         self.debug = debug
@@ -272,12 +279,14 @@ class Database(Console):
         buffer.write("create database ")
         buffer.write(self.name)
         buffer.execute()
+        self.owner.invalidate()
 
     def drop(self):
         buffer = self._buffer()
         buffer.write("drop database ")
         buffer.write(self.name)
         buffer.execute()
+        self.owner.invalidate()
 
     def clear(self):
         self.drop()
