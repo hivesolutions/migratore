@@ -6,6 +6,7 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
+  - "3.5-dev"
   - "pypy"
   - "pypy3"
 install:
@@ -16,3 +17,12 @@ env: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_PASSWORD=""
 before_script: mysql -e "create database migratore_test;"
 script: coverage run --source=migratore setup.py test
 after_success: coveralls
+deploy:
+  provider: pypi
+  user: joamag
+  password:
+    secure: FyiPfB5blg/SG04TfwRul3lnLnLExAylrczdUCJYnc3otwXRrV9NhdA7qDm1zuBDG1pW0fQY8Xrv5jhy2+sKPFHQo7E1hO9PeHMzIRVcm1KBcjxZdiY5ZVpftc8EuE293FZxRyB0tuXwiIHTNGQInEvkOBpgpfR0oa/LtcCDAu4=
+  distributions: sdist bdist_wheel
+  on:
+    tags: true
+    python: "2.7"
