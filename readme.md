@@ -48,6 +48,6 @@ Migratore is currently licensed under the [Apache License, Version 2.0](http://w
 
 ## Build Automation
 
-[![Build Status](https://travis-ci.org/hivesolutions/migratore.png?branch=master)](https://travis-ci.org/hivesolutions/migratore)
-[![Coverage Status](https://coveralls.io/repos/hivesolutions/migratore/badge.png?branch=master)](https://coveralls.io/r/hivesolutions/migratore?branch=master)
-[![PyPi Status](https://img.shields.io/pypi/v/migratore.png)](https://pypi.python.org/pypi/migratore)
+[![Build Status](https://travis-ci.org/hivesolutions/migratore.svg?branch=master)](https://travis-ci.org/hivesolutions/migratore)
+[![Coverage Status](https://coveralls.io/repos/hivesolutions/migratore/badge.svg?branch=master)](https://coveralls.io/r/hivesolutions/migratore?branch=master)
+[![PyPi Status](https://img.shields.io/pypi/v/migratore.svg)](https://pypi.python.org/pypi/migratore)
