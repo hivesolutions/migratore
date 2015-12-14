@@ -190,7 +190,7 @@ class Migratore(object):
         environ = legacy.items(os.environ)
         sorter = lambda item: TYPE_PRIORITY.get(item[0], 0)
         environ.sort(key = sorter, reverse = True)
-        for key, value in legacy.iteritems(os.environ):
+        for key, value in environ:
             key = ALIAS.get(key, key)
             if not key in VALID_TYPES: continue
             if key in kwargs: continue
