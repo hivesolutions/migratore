@@ -169,7 +169,7 @@ class Migratore(object):
         charset = kwargs.get("charset", "utf8")
         echo = kwargs.get("echo", True)
         password_l = len(password)
-        display_l = max([password_l, 3])
+        display_l = min([password_l, 3])
         obfuscated = password[:display_l] + ((password_l - display_l) * "*")
         if echo: cls.echo("mysql %s:%s@%s:%d/%s" % (username, obfuscated, host, port, name))
         connection = MySQLdb.connect(
@@ -193,6 +193,7 @@ class Migratore(object):
         for key, value in legacy.iteritems(os.environ):
             key = ALIAS.get(key, key)
             if not key in VALID_TYPES: continue
+            if key in kwargs: continue
             _type = VALID_TYPES[key]
             key_l = key.lower()
             kwargs[key_l] = _type(value)
