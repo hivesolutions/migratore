@@ -149,8 +149,8 @@ class Migratore(object):
         isolation = kwargs.get("isolation", "read committed")
         charset = kwargs.get("charset", "utf8")
         password_l = len(password)
-        if password_l < 2: raise RuntimeError("Week password (less than two chars)")
-        obfuscated = password[:2] + ((password_l - 2) * "*")
+        display_l = max([password_l, 3])
+        obfuscated = password[:display_l] + ((password_l - display_l) * "*")
         cls.echo("mysql connect %s:%s@%s/%s..." % (username, obfuscated, host, name))
         connection = MySQLdb.connect(
             host,
