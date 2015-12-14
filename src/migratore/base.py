@@ -86,8 +86,8 @@ class Migratore(object):
         return database
 
     @classmethod
-    def get_test(cls, strict = False, *args, **kwargs):
-        database = cls.get_database(echo = False, *args, **kwargs)
+    def get_test(cls, strict = False, echo = False, *args, **kwargs):
+        database = cls.get_database(echo = echo, *args, **kwargs)
         is_test = database.name.endswith("test")
         is_migratore = database.name.endswith("migratore")
         if not is_test and not is_migratore: raise RuntimeError(
