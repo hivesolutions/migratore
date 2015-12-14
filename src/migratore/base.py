@@ -87,7 +87,7 @@ class Migratore(object):
 
     @classmethod
     def get_test(cls, strict = False, *args, **kwargs):
-        database = cls.get_database(*args, **kwargs)
+        database = cls.get_database(echo = False, *args, **kwargs)
         is_test = database.name.endswith("test")
         is_migratore = database.name.endswith("migratore")
         if not is_test and not is_migratore: raise RuntimeError(
@@ -148,10 +148,11 @@ class Migratore(object):
         name = kwargs.get("db", "default")
         isolation = kwargs.get("isolation", "read committed")
         charset = kwargs.get("charset", "utf8")
+        echo = kwargs.get("echo", True)
         password_l = len(password)
         display_l = max([password_l, 3])
         obfuscated = password[:display_l] + ((password_l - display_l) * "*")
-        cls.echo("mysql connect %s:%s@%s/%s..." % (username, obfuscated, host, name))
+        if echo: cls.echo("mysql %s:%s@%s/%s" % (username, obfuscated, host, name))
         connection = MySQLdb.connect(
             host,
             port = port,
