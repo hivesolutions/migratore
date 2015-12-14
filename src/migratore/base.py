@@ -42,6 +42,25 @@ VALID_TYPES = dict(
 for the various environment variables accepted by the migratore
 infra-structure as startup arguments """
 
+TYPE_PRIORITY = dict(
+    DB_HOST = 10,
+    HOST = 1,
+    DB_PORT = 10,
+    PORT = 1,
+    DB_USER = 10,
+    DB_USERNAME = 10,
+    USERNAME = 1,
+    DB_PASSWORD = 10,
+    PASSWORD = 1,
+    DB_NAME = 10,
+    DB = 1,
+    FS = 1,
+    DEBUG = 1
+)
+""" The map/dictionary that defines the priority for each of the possible
+value to be used for the configuration, this is critical to ensure
+a proper usage of the environment variables (no error in overlap) """
+
 SQL_TYPES_MAP = {
     "text" : "text",
     "string" : "varchar(255)",
@@ -152,7 +171,7 @@ class Migratore(object):
         password_l = len(password)
         display_l = max([password_l, 3])
         obfuscated = password[:display_l] + ((password_l - display_l) * "*")
-        if echo: cls.echo("mysql %s:%s@%s/%s" % (username, obfuscated, host, name))
+        if echo: cls.echo("mysql %s:%s@%s:%d/%s" % (username, obfuscated, host, port, name))
         connection = MySQLdb.connect(
             host,
             port = port,
@@ -168,6 +187,8 @@ class Migratore(object):
 
     @classmethod
     def _environ(cls, args, kwargs):
+        environ = legacy.items(os.environ)
+        environ.sort(key = lambda item: TYPE_PRIORITY.get(item[0], 0), reverse = True)
         for key, value in legacy.iteritems(os.environ):
             key = ALIAS.get(key, key)
             if not key in VALID_TYPES: continue
