@@ -192,10 +192,10 @@ class Migratore(object):
         environ.sort(key = sorter, reverse = True)
         for key, value in environ:
             key = ALIAS.get(key, key)
-            if not key in VALID_TYPES: continue
-            if key in kwargs: continue
-            _type = VALID_TYPES[key]
             key_l = key.lower()
+            if key_l in kwargs: continue
+            if not key in VALID_TYPES: continue
+            _type = VALID_TYPES[key]
             kwargs[key_l] = _type(value)
 
 class Console(object):
