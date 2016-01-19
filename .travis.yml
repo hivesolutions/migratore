@@ -3,6 +3,7 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.2"
   - "3.3"
   - "3.4"
   - "3.5"
@@ -11,7 +12,7 @@ python:
   - "pypy3"
 install:
   - pip install -r requirements.txt
-  - pip install pymysql
+  - pip install pymysql<0.7.0
   - pip install coveralls
   - pip install twine
 env: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_PASSWORD=""
