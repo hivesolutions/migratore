@@ -7,20 +7,20 @@ import setuptools
 
 BASE_PATH = os.path.realpath(__file__)
 BASE_DIR = os.path.dirname(BASE_PATH)
-MIGRATORE_DIR = os.path.join(BASE_DIR, "src", "migratore")
-sys.path.insert(0, MIGRATORE_DIR)
+SRC_DIR = os.path.join(BASE_DIR, "src")
+sys.path.insert(0, SRC_DIR)
 
-import info
+import migratore
 
 setuptools.setup(
-    name = info.NAME,
-    version = info.VERSION,
-    author = info.AUTHOR,
-    author_email = info.EMAIL,
-    description = info.DESCRIPTION,
-    license = info.LICENSE,
-    keywords = info.KEYWORDS,
-    url = info.URL,
+    name = migratore.NAME,
+    version = migratore.VERSION,
+    author = migratore.AUTHOR,
+    author_email = migratore.EMAIL,
+    description = migratore.DESCRIPTION,
+    license = migratore.LICENSE,
+    keywords = migratore.KEYWORDS,
+    url = migratore.URL,
     zip_safe = True,
     packages = [
         "migratore",
