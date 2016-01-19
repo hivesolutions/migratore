@@ -7,7 +7,9 @@ import setuptools
 
 BASE_PATH = os.path.realpath(__file__)
 BASE_DIR = os.path.dirname(BASE_PATH)
-MIGRATORE_DIR = os.path.join(BASE_DIR, "src", "migratore")
+SRC_DIR = os.path.join(BASE_DIR, "src")
+MIGRATORE_DIR = os.path.join(SRC_DIR, "migratore")
+sys.path.insert(0, SRC_DIR)
 sys.path.insert(0, MIGRATORE_DIR)
 
 import info
