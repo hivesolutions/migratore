@@ -35,3 +35,5 @@ if __name__ == "__main__":
     migrations_path = os.path.join(dir_path, "migrations")
     loader = migratore.DirectoryLoader(migrations_path)
     loader.upgrade()
+else:
+    __path__ = []
