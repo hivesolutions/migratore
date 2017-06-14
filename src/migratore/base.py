@@ -469,7 +469,7 @@ class Database(Console):
 
         def join():
             value = buffer.getvalue()
-            is_unicode = type(value) == legacy.UNICODE
+            is_unicode = isinstance(value, legacy.UNICODE)
             if is_unicode: return value
             return value.decode("utf-8")
 
