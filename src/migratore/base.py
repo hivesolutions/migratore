@@ -229,8 +229,8 @@ class Console(object):
         This is important as it may condition the wat the console
         output will be made (carriage return, colors, etc).
 
-        @rtype: bool
-        @return: If the current standard output/input methods are
+        :rtype: bool
+        :return: If the current standard output/input methods are
         compliant with tty standard.
         """
 
