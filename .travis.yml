@@ -26,7 +26,6 @@ install:
   - pip install -r requirements.txt
   - pip install "pymysql<0.7.0"
   - pip install "pycparser<2.19" coveralls
-  - pip install twine
 env: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_PASSWORD=""
 before_script: mysql -e "create database migratore_test;"
 script: if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then coverage run --source=migratore setup.py test; else python setup.py test; fi
