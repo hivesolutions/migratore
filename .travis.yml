@@ -18,6 +18,8 @@ matrix:
   - python: 3.7
     dist: xenial
     sudo: true
+services:
+  - mysql
 before_install:
   - pip install --upgrade pip setuptools
 install:
