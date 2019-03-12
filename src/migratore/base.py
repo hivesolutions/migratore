@@ -286,22 +286,26 @@ class Database(Console):
         # this cursor is going to be used for the execution
         cursor = self.connection.cursor()
 
-        # executes the query using the current cursor
-        # then closes the cursor avoid the leak of
-        # cursor objects (memory reference leaking)
-        try: cursor.execute(query)
-        except: cursor.close(); raise
+        try:
+            # executes the query using the current cursor
+            # then closes the cursor avoid the leak of
+            # cursor objects (memory reference leaking)
+            cursor.execute(query)
 
-        # in case the (auto) fetch flag is set not the cursor
-        # should be closed right after the query in order
-        # to avoid any memory leak in execution
-        if not fetch: cursor.close(); return
+            # in case the (auto) fetch flag is set not the cursor
+            # should be closed right after the query in order
+            # to avoid any memory leak in execution
+            if not fetch: return
 
-        # fetches the complete set of results from the cursor
-        # and returns these results to the caller method as this
-        # is the expected behavior for the current execution
-        try: result = cursor.fetchall()
-        finally: cursor.close()
+            # fetches the complete set of results from the cursor
+            # and returns these results to the caller method as this
+            # is the expected behavior for the current execution
+            result = cursor.fetchall()
+        finally:
+            # in case there's an issue whatsoever the cursor should
+            # be closed in order to avoid possible cursor leak
+            cursor.close()
+
         return result
 
     def open(self):
