@@ -290,7 +290,7 @@ class Database(Console):
         # then closes the cursor avoid the leak of
         # cursor objects (memory reference leaking)
         try: cursor.execute(query)
-        finally: cursor.close()
+        except: cursor.close(); raise
 
         # in case the (auto) fetch flag is set not the cursor
         # should be closed right after the query in order
