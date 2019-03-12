@@ -295,7 +295,7 @@ class Database(Console):
             # in case the (auto) fetch flag is set not the cursor
             # should be closed right after the query in order
             # to avoid any memory leak in execution
-            if not fetch: return
+            if not fetch: return None
 
             # fetches the complete set of results from the cursor
             # and returns these results to the caller method as this
@@ -306,6 +306,8 @@ class Database(Console):
             # be closed in order to avoid possible cursor leak
             cursor.close()
 
+        # returns the final result value to the caller method
+        # according to the cursor execution
         return result
 
     def open(self):
