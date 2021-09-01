@@ -173,7 +173,7 @@ class Migratore(object):
         obfuscated = password[:display_l] + ((password_l - display_l) * "*")
         if echo: cls.echo("mysql %s:%s@%s:%d/%s" % (username, obfuscated, host, port, name))
         connection = MySQLdb.connect(
-            host,
+            host = host,
             port = port,
             user = username,
             passwd = password,

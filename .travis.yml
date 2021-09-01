@@ -2,9 +2,11 @@ dist: trusty
 language: python
 python:
   - "2.7"
-  - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
   - "nightly"
   - "pypy3"
 matrix:
@@ -23,12 +25,12 @@ before_install:
   - pip install --upgrade pip setuptools
 install:
   - pip install -r requirements.txt
-  - pip install pymysql
-  - pip install coveralls
+  - pip install pymysql<
+  - if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then pip install coveralls; fi
 env: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_PASSWORD=""
 before_script: mysql -e "create database migratore_test;"
-script: coverage run --source=migratore setup.py test
-after_success: coveralls
+script:  if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then coverage run --source=migratore setup.py test; else python setup.py test; fi
+after_success: if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then coveralls; fi
 deploy:
   provider: pypi
   user: joamag
