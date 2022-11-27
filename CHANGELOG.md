@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for `README.md` file in the `long_description`
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.4.1] - 2022-11-27
+
+### Added
+
+* Support for `README.md` file in the `long_description`
 
 ## [0.4.0] - 2022-11-27
 
