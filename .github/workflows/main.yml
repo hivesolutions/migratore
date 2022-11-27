@@ -29,4 +29,4 @@ jobs:
           pip install -r extra.py2.txt
           pip install pymysql
         if: matrix.python-version == '2.7'
-      - run: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_PASSWORD="" python setup.py test
+      - run: DB_NAME=migratore_test DB_HOST=localhost DB_USERNAME=root DB_PASSWORD="" python setup.py test
