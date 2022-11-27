@@ -10,7 +10,7 @@ pip install migratore
 
 ## Execution
 
-```
+```bash
 HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upgrade
 ```
 
@@ -24,7 +24,7 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 
 ## Commands
 
-* `help` - Prints a help message about the cli interface
+* `help` - Prints a help message about the CLI interface
 * `version` - Prints the current version of migratore
 * `environ` - Displays the current environment in the standard output
 * `list` - Lists the executed migrations on the current database
