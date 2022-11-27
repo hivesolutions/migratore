@@ -9,12 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for `UNIX_SOCKET` connection
+*
 
 ### Changed
 
-* CI/CD model now uses GitHub Actions
+*
 
 ### Fixed
 
 *
+
+## [0.4.0] - 2022-11-27
+
+### Added
+
+* Support for `UNIX_SOCKET` connection
+
+### Changed
+
+* Major release in a while 🎉
+* CI/CD model now uses GitHub Actions
