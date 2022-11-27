@@ -31,7 +31,7 @@ jobs:
           pip install -r extra.py2.txt
           pip install pymysql
         if: matrix.python-version == '2.7'
-      - run: DB_NAME=migratore_test DB_HOST=localhost DB_USERNAME=root DB_PASSWORD="" python setup.py test
+      - run: DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" python setup.py test
       - run: pip install twine wheel
       - run: python setup.py sdist bdist_wheel
       - run: python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} dist/*
