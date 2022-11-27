@@ -13,6 +13,7 @@ that each iteration of data retrieval will have this size """
 ALIAS = dict(
     DB_HOST = "HOST",
     DB_PORT = "PORT",
+    DB_UNIX_SOCKET = "UNIX_SOCKET",
     DB_USER = "USERNAME",
     DB_USERNAME = "USERNAME",
     DB_PASSWORD = "PASSWORD",
@@ -32,6 +33,7 @@ to be representing sequence structures under the python language """
 VALID_TYPES = dict(
     HOST = str,
     PORT = int,
+    UNIX_SOCKET = str,
     USERNAME = str,
     PASSWORD = str,
     DB = str,
@@ -47,6 +49,8 @@ TYPE_PRIORITY = dict(
     HOST = 1,
     DB_PORT = 10,
     PORT = 1,
+    DB_UNIX_SOCKET = 10,
+    UNIX_SOCKET = 1,
     DB_USER = 10,
     DB_USERNAME = 10,
     USERNAME = 1,
@@ -162,6 +166,7 @@ class Migratore(object):
         except ImportError: import pymysql; MySQLdb = pymysql
         host = kwargs.get("host", "localhost")
         port = kwargs.get("port", 3306)
+        unix_socket = kwargs.get("unix_socket", None)
         username = kwargs.get("username", "root")
         password = kwargs.get("password", "root")
         name = kwargs.get("db", "default")
@@ -171,8 +176,14 @@ class Migratore(object):
         password_l = len(password)
         display_l = min([password_l, 3])
         obfuscated = password[:display_l] + ((password_l - display_l) * "*")
-        if echo: cls.echo("mysql %s:%s@%s:%d/%s" % (username, obfuscated, host, port, name))
+        target = unix_socket if unix_socket else "%s:%d" % (host, port)
+        if echo: cls.echo("mysql %s:%s@%s/%s" % (username, obfuscated, target, name))
         connection = MySQLdb.connect(
+            unix_socket = unix_socket,
+            user = username,
+            passwd = password,
+            db = name
+        ) if unix_socket else MySQLdb.connect(
             host = host,
             port = port,
             user = username,

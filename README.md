@@ -17,6 +17,8 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 ## Variables
 
 * `HOST` - Hostname or IP address of the database system for migration
+* `PORT` - TCP port to be used in the connection with the database system
+* `UNIX_SOCKET` - Filesystem path to the UNIX socket file to be used in connection
 * `DB` - Name of the database used as the migration target
 * `USERNAME` - Username for authentication in database
 * `USERNAME` - Password to be used for authentication in database
