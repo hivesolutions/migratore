@@ -14,6 +14,12 @@ jobs:
     container: python:${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v1
+      - run: |
+          apt-get update && apt-get install -y mariadb-server
+          mkdir -p /var/run/mysqld && chown -R mysql:root /var/run/mysqld
+          mysqld &
+          sleep 3
+          mysql -e "create database migratore_test;"
       - run: python --version
       - run: |
           pip install -r requirements.txt
@@ -25,7 +31,7 @@ jobs:
           pip install -r extra.py2.txt
           pip install pymysql
         if: matrix.python-version == '2.7'
-      - run: DB_NAME=migratore_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_PASSWORD="" python setup.py test
+      - run: DB_NAME=migratore_test DB_HOST=localhost DB_USERNAME=root DB_PASSWORD="" python setup.py test
       - run: pip install twine wheel
       - run: python setup.py sdist bdist_wheel
       - run: python -m twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} dist/*

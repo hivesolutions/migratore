@@ -18,6 +18,8 @@ jobs:
           apt-get update && apt-get install -y mariadb-server
           mkdir -p /var/run/mysqld && chown -R mysql:root /var/run/mysqld
           mysqld &
+          sleep 3
+          mysql -e "create database migratore_test;"
       - run: python --version
       - run: |
           pip install -r requirements.txt
