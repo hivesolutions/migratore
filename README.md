@@ -21,7 +21,7 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `UNIX_SOCKET` - Filesystem path to the UNIX socket file to be used in connection
 * `DB` - Name of the database used as the migration target
 * `USERNAME` - Username for authentication in database
-* `USERNAME` - Password to be used for authentication in database
+* `PASSWORD` - Password to be used for authentication in database
 * `FS` - Base file system path for file migration (may depend on migration context)
 
 ## Commands
