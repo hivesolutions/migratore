@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Prints migration description to the STDOUT
+*
 
 ### Fixed
 
 *
+
+## [0.4.2] - 2023-01-02
+
+### Changed
+
+* Prints migration description to the STDOUT
 
 ## [0.4.1] - 2022-11-27
 
