@@ -11,9 +11,9 @@ jobs:
       matrix:
         python-version: [2.7]
     runs-on: ubuntu-latest
-    container: python:${{ matrix.python-version }}
+    container: python:${{ matrix.python-version }}-buster
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - run: |
           apt-get update && apt-get install -y mariadb-server
           mkdir -p /var/run/mysqld && chown -R mysql:root /var/run/mysqld
