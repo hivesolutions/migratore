@@ -215,10 +215,7 @@ class Migratore(object):
             kwargs[key_l] = _type(value)
 
     @classmethod
-    def _environ_dot_env(cls, args, kwargs):
-        name = ".env" if not "name" in kwargs else kwargs["name"]
-        encoding = "utf-8" if not "encoding" in kwargs else kwargs["encoding"]
-
+    def _environ_dot_env(cls, args, kwargs, name=".env", encoding="utf-8"):
         file_path = os.path.abspath(name)
         file_path = os.path.normpath(file_path)
 
@@ -239,6 +236,8 @@ class Migratore(object):
         lines = data.splitlines()
         lines = [line.strip() for line in lines]
 
+        envs = dict()
+
         for line in lines:
             line = line.strip()
             if not line:
@@ -255,7 +254,9 @@ class Migratore(object):
                 and value.endswith("'")
             ):
                 value = value[1:-1].replace('\\"', '"')
+            envs[key] = value
 
+        for key, value in legacy.iteritems(envs):
             key = ALIAS.get(key, key)
             key_l = key.lower()
             if key_l in kwargs:
