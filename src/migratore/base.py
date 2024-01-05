@@ -34,9 +34,9 @@ VALID_TYPES = dict(
     USERNAME=str,
     PASSWORD=str,
     DB=str,
+    DB_URL=str,
     FS=str,
     DEBUG=int,
-    DB_URL=str,
 )
 """ The dictionary defining the names and the expected data types
 for the various environment variables accepted by the migratore
