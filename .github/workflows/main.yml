@@ -9,11 +9,23 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, "3.10", rc]
+        python-version: [
+          2.7,
+          3.5,
+          3.6,
+          3.7,
+          3.8,
+          3.9,
+          "3.10",
+          "3.11",
+          "3.12",
+          latest,
+          rc
+        ]
     runs-on: ubuntu-latest
     container: python:${{ matrix.python-version }}-buster
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           apt-get update && apt-get install -y mariadb-server
           mkdir -p /var/run/mysqld && chown -R mysql:root /var/run/mysqld

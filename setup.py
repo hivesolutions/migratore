@@ -15,36 +15,22 @@ sys.path.insert(0, MIGRATORE_DIR)
 import info
 
 setuptools.setup(
-    name = info.NAME,
-    version = info.VERSION,
-    author = info.AUTHOR,
-    author_email = info.EMAIL,
-    description = info.DESCRIPTION,
-    license = info.LICENSE,
-    keywords = info.KEYWORDS,
-    url = info.URL,
-    zip_safe = True,
-    packages = [
-        "migratore",
-        "migratore.examples",
-        "migratore.examples.migrations"
-    ],
-    test_suite = "migratore.test",
-    package_dir = {
-        "" : os.path.normpath("src")
-    },
-    package_data = {
-        "migratore" : ["templates/*"]
-    },
-    entry_points = {
-        "console_scripts" : [
-            "migratore = migratore.cli:main"
-        ]
-    },
-    install_requires = [
-        "legacy"
-    ],
-    classifiers = [
+    name=info.NAME,
+    version=info.VERSION,
+    author=info.AUTHOR,
+    author_email=info.EMAIL,
+    description=info.DESCRIPTION,
+    license=info.LICENSE,
+    keywords=info.KEYWORDS,
+    url=info.URL,
+    zip_safe=True,
+    packages=["migratore", "migratore.examples", "migratore.examples.migrations"],
+    test_suite="migratore.test",
+    package_dir={"": os.path.normpath("src")},
+    package_data={"migratore": ["templates/*"]},
+    entry_points={"console_scripts": ["migratore = migratore.cli:main"]},
+    install_requires=["legacy"],
+    classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Topic :: Utilities",
         "License :: OSI Approved :: Apache Software License",
@@ -59,8 +45,15 @@ setuptools.setup(
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7"
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
-    long_description = open(os.path.join(os.path.dirname(__file__), "README.md"), "rb").read().decode("utf-8"),
-    long_description_content_type = "text/markdown"
+    long_description=open(os.path.join(os.path.dirname(__file__), "README.md"), "rb")
+    .read()
+    .decode("utf-8"),
+    long_description_content_type="text/markdown",
 )

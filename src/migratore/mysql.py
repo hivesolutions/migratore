@@ -3,8 +3,8 @@
 
 from . import base
 
-class MySQLDatabase(base.Database):
 
+class MySQLDatabase(base.Database):
     def __init__(self, *args, **kwargs):
         base.Database.__init__(self, *args, **kwargs)
         self.engine = "mysql"
@@ -26,7 +26,7 @@ class MySQLDatabase(base.Database):
         buffer.write("from information_schema.tables where table_schema = '")
         buffer.write(self.name)
         buffer.write("'")
-        counts = buffer.execute(fetch = True)
+        counts = buffer.execute(fetch=True)
         return counts[0][0]
 
     def exists_table(self, name):
@@ -37,7 +37,7 @@ class MySQLDatabase(base.Database):
         buffer.write("' and table_name = '")
         buffer.write(name)
         buffer.write("'")
-        counts = buffer.execute(fetch = True)
+        counts = buffer.execute(fetch=True)
         exists = True if counts and counts[0][0] > 0 else False
         return exists
 
@@ -49,7 +49,7 @@ class MySQLDatabase(base.Database):
         buffer.write("' and table_name = '")
         buffer.write(name)
         buffer.write("'")
-        names = buffer.execute(fetch = True)
+        names = buffer.execute(fetch=True)
         names = [value[0] for value in names]
         return names
 
@@ -59,9 +59,9 @@ class MySQLDatabase(base.Database):
         self.types_map["data"] = "longtext"
         self.types_map["metadata"] = "longtext"
 
-class MySQLTable(base.Table):
 
-    def create_index(self, name, type = "hash"):
+class MySQLTable(base.Table):
+    def create_index(self, name, type="hash"):
         index = "%s_%s_%s" % (self.name, name, type)
         index = index[-64:]
         buffer = self.owner._buffer()
@@ -95,7 +95,7 @@ class MySQLTable(base.Table):
         buffer.write("' and column_name = '")
         buffer.write(name)
         buffer.write("'")
-        counts = buffer.execute(fetch = True)
+        counts = buffer.execute(fetch=True)
         exists = True if counts and counts[0][0] > 0 else False
         return exists
 
@@ -109,5 +109,5 @@ class MySQLTable(base.Table):
         buffer.write("' and column_name = '")
         buffer.write(name)
         buffer.write("'")
-        result = buffer.execute(fetch = True)
+        result = buffer.execute(fetch=True)
         return result[0][0]

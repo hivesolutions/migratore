@@ -5,8 +5,8 @@ import time
 
 import migratore
 
-class Migration(migratore.Migration):
 
+class Migration(migratore.Migration):
     def __init__(self):
         migratore.Migration.__init__(self)
         self.uuid = "b58707c9-48a7-46ff-ba38-474ee7c10d96"
@@ -19,13 +19,14 @@ class Migration(migratore.Migration):
         table = db.get_table("users")
 
         self.begin("migrating schema")
-        table.add_column("date", type = "integer")
+        table.add_column("date", type="integer")
         self.end("migrating schema")
 
         def task(value):
             _time = int(time.time())
-            value.update(date = _time)
+            value.update(date=_time)
 
-        table.apply(task, title = "creating dates")
+        table.apply(task, title="creating dates")
+
 
 migration = Migration()

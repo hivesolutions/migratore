@@ -6,8 +6,8 @@ import sys
 
 from . import base
 
-class Loader(object):
 
+class Loader(object):
     def __init__(self):
         self.migrations = []
         self.migrations_m = {}
@@ -45,19 +45,21 @@ class Loader(object):
             timestamp = timestamp or 0
             for migration in migrations:
                 is_valid = migration.timestamp > timestamp
-                if not is_valid: continue
+                if not is_valid:
+                    continue
                 result = migration.start()
-                if not result == "success": break
+                if not result == "success":
+                    break
         finally:
             db.close()
 
     def rebuild(self, id, *args, **kwargs):
         self.load()
         migration = self.migrations_m[id]
-        migration.start(operation = "partial")
+        migration.start(operation="partial")
+
 
 class DirectoryLoader(Loader):
-
     def __init__(self, path):
         Loader.__init__(self)
         self.path = path
@@ -72,7 +74,8 @@ class DirectoryLoader(Loader):
 
         for file in files:
             base, extension = os.path.splitext(file)
-            if not extension == ".py": continue
+            if not extension == ".py":
+                continue
             names.append(base)
 
         for name in names:
@@ -80,11 +83,12 @@ class DirectoryLoader(Loader):
             modules.append(module)
 
         for module in modules:
-            if not hasattr(module, "migration"): continue
+            if not hasattr(module, "migration"):
+                continue
             migration = getattr(module, "migration")
             self.migrations.append(migration)
             self.migrations_m[migration.uuid] = migration
             self.migrations_m[str(migration.timestamp)] = migration
 
-        self.migrations.sort(key = lambda item: item.timestamp)
+        self.migrations.sort(key=lambda item: item.timestamp)
         return self.migrations

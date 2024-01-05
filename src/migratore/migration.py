@@ -10,9 +10,9 @@ import traceback
 from . import base
 from . import loader
 
-class Migration(base.Console):
 
-    def __init__(self, uuid = None, timestamp = None, description = None):
+class Migration(base.Console):
+    def __init__(self, uuid=None, timestamp=None, description=None):
         self.uuid = uuid
         self.timestamp = timestamp
         self.description = description
@@ -51,36 +51,38 @@ class Migration(base.Console):
         try:
             table = db.get_table("migratore")
             executions = table.select(
-                order_by = (("object_id", "asc"),),
-                result = "success"
+                order_by=(("object_id", "asc"),), result="success"
             )
 
             is_first = True
             for execution in executions:
-                if is_first: is_first = False
-                else: base.Migratore.echo("")
-                cls._execution(execution, is_first = is_first)
+                if is_first:
+                    is_first = False
+                else:
+                    base.Migratore.echo("")
+                cls._execution(execution, is_first=is_first)
 
-        finally: db.close()
+        finally:
+            db.close()
 
     @classmethod
     def errors(cls):
         db = base.Migratore.get_db()
         try:
             table = db.get_table("migratore")
-            executions = table.select(
-                order_by = (("object_id", "asc"),),
-                result = "error"
-            )
+            executions = table.select(order_by=(("object_id", "asc"),), result="error")
 
             is_first = True
             for execution in executions:
-                if is_first: is_first = False
-                else: base.Migratore.echo("")
-                cls._execution(execution, is_first = is_first)
-                cls._error(execution, is_first = is_first)
+                if is_first:
+                    is_first = False
+                else:
+                    base.Migratore.echo("")
+                cls._execution(execution, is_first=is_first)
+                cls._error(execution, is_first=is_first)
 
-        finally: db.close()
+        finally:
+            db.close()
 
     @classmethod
     def mark(self, *args, **kwargs):
@@ -96,10 +98,11 @@ class Migration(base.Console):
         db = base.Migratore.get_db()
         try:
             table = db.get_table("migratore")
-            execution = table.get(object_id = object_id)
+            execution = table.get(object_id=object_id)
             traceback = execution["traceback"]
             base.Migratore.echo(traceback)
-        finally: db.close()
+        finally:
+            db.close()
 
     @classmethod
     def rebuild(self, id, *args, **kwargs):
@@ -109,14 +112,14 @@ class Migration(base.Console):
         _loader.rebuild(id, *args, **kwargs)
 
     @classmethod
-    def upgrade(self, path = None, *args, **kwargs):
+    def upgrade(self, path=None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
         _loader.upgrade(*args, **kwargs)
 
     @classmethod
-    def generate(cls, path = None):
+    def generate(cls, path=None):
         _uuid = uuid.uuid4()
         _uuid = str(_uuid)
         timestamp = time.time()
@@ -133,8 +136,10 @@ class Migration(base.Console):
         base.Migratore.echo("Generating migration '%s'..." % _uuid)
         data = cls.template(template_path, *args)
         file = open(path, "wb")
-        try: file.write(data)
-        finally: file.close()
+        try:
+            file.write(data)
+        finally:
+            file.close()
         base.Migratore.echo("Migration file '%s' generated" % path)
 
     @classmethod
@@ -142,8 +147,10 @@ class Migration(base.Console):
         encoding = kwargs.get("encoding", "utf-8")
 
         file = open(path, "rb")
-        try: contents = file.read()
-        finally: file.close()
+        try:
+            contents = file.read()
+        finally:
+            file.close()
 
         contents = contents.decode(encoding)
         result = contents % args
@@ -155,7 +162,7 @@ class Migration(base.Console):
         return date_time.strftime("%d %b %Y %H:%M:%S")
 
     @classmethod
-    def _execution(cls, execution, is_first = True):
+    def _execution(cls, execution, is_first=True):
         object_id = execution["object_id"]
         _uuid = execution["uuid"]
         timestamp = execution["timestamp"]
@@ -180,23 +187,27 @@ class Migration(base.Console):
         base.Migratore.echo("End time    : %s" % end_s)
 
     @classmethod
-    def _error(cls, execution, is_first = True):
+    def _error(cls, execution, is_first=True):
         error = execution["error"]
 
         base.Migratore.echo("Error       :  %s" % error)
 
-    def start(self, operation = "run", operator = "Administrator"):
+    def start(self, operation="run", operator="Administrator"):
         db = base.Migratore.get_db()
-        try: return self._start(db, operation, operator)
-        finally: db.close()
+        try:
+            return self._start(db, operation, operator)
+        finally:
+            db.close()
 
     def run(self, db):
         self.echo("Running migration '%s'" % self.uuid)
-        if self.description: self.echo("%s" % self.description)
+        if self.description:
+            self.echo("%s" % self.description)
 
     def partial(self, db):
         self.echo("Running partial '%s'" % self.uuid)
-        if self.description: self.echo("%s" % self.description)
+        if self.description:
+            self.echo("%s" % self.description)
 
     def cleanup(self, db):
         self.echo("Cleaning up...")
@@ -210,16 +221,20 @@ class Migration(base.Console):
         start = time.time()
 
         method = getattr(self, operation)
-        try: method(db)
+        try:
+            method(db)
         except Exception as exception:
             db.rollback()
             lines = traceback.format_exc().splitlines()
             lines_s = "\n".join(lines)
             result = "error"
             error = str(exception)
-            for line in lines: self.echo(line)
-        else: db.commit()
-        finally: self.cleanup(db)
+            for line in lines:
+                self.echo(line)
+        else:
+            db.commit()
+        finally:
+            self.cleanup(db)
 
         operation_s = operation.title()
 
@@ -233,26 +248,26 @@ class Migration(base.Console):
 
         table = db.get_table("migratore")
         table.insert(
-            uuid = self.uuid,
-            timestamp = self.timestamp,
-            description = self.description,
-            result = result,
-            error = error,
-            traceback = lines_s,
-            operation = operation_s,
-            operator = operator,
-            start = start,
-            end = end,
-            duration = duration,
-            start_s = start_s,
-            end_s = end_s,
+            uuid=self.uuid,
+            timestamp=self.timestamp,
+            description=self.description,
+            result=result,
+            error=error,
+            traceback=lines_s,
+            operation=operation_s,
+            operator=operator,
+            start=start,
+            end=end,
+            duration=duration,
+            start_s=start_s,
+            end_s=end_s,
         )
         db.commit()
 
         return result
 
-class MarkMigration(Migration):
 
+class MarkMigration(Migration):
     def __init__(self):
         Migration.__init__(self)
         self.uuid = "da023aab-736d-40a6-8e9b-c6175c1241f5"
@@ -262,6 +277,7 @@ class MarkMigration(Migration):
     def start(self, *args, **kwargs):
         db = base.Migratore.get_db()
         table = db.get_table("migratore")
-        count = table.count(result = "success")
-        if count > 0: return
+        count = table.count(result="success")
+        if count > 0:
+            return
         return Migration.start(self, *args, **kwargs)

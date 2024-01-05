@@ -6,11 +6,11 @@ import unittest
 
 import migratore
 
-class BaseTest(unittest.TestCase):
 
+class BaseTest(unittest.TestCase):
     def tearDown(self):
         unittest.TestCase.tearDown(self)
-        db = migratore.Migratore.get_test(strict = False)
+        db = migratore.Migratore.get_test(strict=False)
         db.clear()
 
     def test_buffer(self):
@@ -24,8 +24,8 @@ class BaseTest(unittest.TestCase):
     def test_create(self):
         db = migratore.Migratore.get_test()
         table = db.create_table("users")
-        table.add_column("username", type = "text")
-        table.add_column("password", type = "text")
+        table.add_column("username", type="text")
+        table.add_column("password", type="text")
 
         self.assertEqual(db.exists_table("users"), True)
         self.assertEqual(db.exists_table("users_extra"), False)
@@ -37,11 +37,11 @@ class BaseTest(unittest.TestCase):
     def test_rename(self):
         db = migratore.Migratore.get_test()
         table = db.create_table("users")
-        table.add_column("username", type = "text")
-        table.add_column("height", type = "float")
-        table.insert(username = "11", height = 42.84)
-        table.change_column("username", "username_rename", type = "integer")
-        table.change_column("height", type = "integer")
+        table.add_column("username", type="text")
+        table.add_column("height", type="float")
+        table.insert(username="11", height=42.84)
+        table.change_column("username", "username_rename", type="integer")
+        table.change_column("height", type="integer")
 
         self.assertEqual(table.has_column("username"), False)
         self.assertEqual(table.has_column("height"), True)
@@ -50,7 +50,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(table.type_column("height"), "int")
 
         table = db.get_table("users")
-        result = table.select(username_rename = 11)
+        result = table.select(username_rename=11)
         self.assertNotEqual(len(result), 0)
         self.assertNotEqual(result[0], None)
         self.assertEqual(result[0]["username_rename"], 11)
