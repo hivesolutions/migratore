@@ -10,20 +10,20 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          2.7,
-          3.5,
-          3.6,
-          3.7,
-          3.8,
-          3.9,
-          "3.10",
-          "3.11",
-          "3.12",
+          "2.7-buster",
+          "3.5-buster",
+          "3.6-buster",
+          "3.7-buster",
+          "3.8-buster",
+          "3.9-buster",
+          "3.10-buster",
+          "3.11-buster",
+          "3.12-bookworm",
           latest,
           rc
         ]
     runs-on: ubuntu-latest
-    container: python:${{ matrix.python-version }}-buster
+    container: python:${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -37,10 +37,10 @@ jobs:
           pip install -r requirements.txt
           pip install -r extra.txt
           pip install pymysql
-        if: matrix.python-version != '2.7'
+        if: matrix.python-version != '2.7-buster'
       - run: |
           pip install -r requirements.py2.txt
           pip install -r extra.py2.txt
           pip install pymysql
-        if: matrix.python-version == '2.7'
+        if: matrix.python-version == '2.7-buster'
       - run: DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" python setup.py test

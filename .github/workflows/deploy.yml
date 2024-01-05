@@ -9,9 +9,9 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        python-version: [2.7]
+        python-version: ["2.7-buster"]
     runs-on: ubuntu-latest
-    container: python:${{ matrix.python-version }}-buster
+    container: python:${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -25,12 +25,12 @@ jobs:
           pip install -r requirements.txt
           pip install -r extra.txt
           pip install pymysql
-        if: matrix.python-version != '2.7'
+        if: matrix.python-version != '2.7-buster'
       - run: |
           pip install -r requirements.py2.txt
           pip install -r extra.py2.txt
           pip install pymysql
-        if: matrix.python-version == '2.7'
+        if: matrix.python-version == '2.7-buster'
       - run: DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" python setup.py test
       - run: pip install twine wheel
       - run: python setup.py sdist bdist_wheel
