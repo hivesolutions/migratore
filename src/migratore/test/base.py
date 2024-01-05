@@ -6,6 +6,11 @@ import unittest
 
 import migratore
 
+try:
+    import unittest.mock as mock
+except ImportError:
+    mock = None
+
 
 class BaseTest(unittest.TestCase):
     def tearDown(self):
@@ -57,3 +62,30 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(result[0]["height"], 43)
         self.assertEqual(type(result[0]["username_rename"]) in (int, legacy.LONG), True)
         self.assertEqual(type(result[0]["height"]) in (int, legacy.LONG), True)
+
+    def test_environ_dot_env(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        mock_data = mock.mock_open(
+            read_data=b"#This is a comment\nDB_PORT=80\nDB_USER=user\n"
+        )
+
+        with mock.patch("os.path.exists", return_value=True), mock.patch(
+            "builtins.open", mock_data, create=True
+        ) as mock_open:
+            args = []
+            kwargs = {}
+            migratore.base.Migratore._environ_dot_env(args, kwargs)
+
+            result = kwargs["port"]
+            self.assertEqual(type(result), int)
+            self.assertEqual(result, 80)
+
+            result = kwargs["username"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "user")
+
+            self.assertEqual(len(kwargs), 2)
+
+            self.assertEqual(mock_open.return_value.close.call_count, 1)
