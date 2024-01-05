@@ -1,6 +1,12 @@
 *.pyc
 *.egg
 
+.DS_Store
+
+/.vscode/settings.json
+
+/.venv
+
 /dist
 /build
 /src/migratore.egg-info
