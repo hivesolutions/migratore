@@ -73,7 +73,7 @@ class BaseTest(unittest.TestCase):
 
         with mock.patch("os.path.exists", return_value=True), mock.patch(
             "builtins.open", mock_data, create=True
-        ):
+        ) as mock_open:
             args = []
             kwargs = {}
             migratore.Migratore._environ_dot_env(args, kwargs)
@@ -88,6 +88,8 @@ class BaseTest(unittest.TestCase):
 
             self.assertEqual(len(kwargs), 2)
 
+            self.assertEqual(mock_open.return_value.close.call_count, 1)
+
     def test__process_db_url(self):
         if mock == None:
             self.skipTest("Skipping test: mock unavailable")
@@ -98,7 +100,7 @@ class BaseTest(unittest.TestCase):
 
         with mock.patch("os.path.exists", return_value=True), mock.patch(
             "builtins.open", mock_data, create=True
-        ):
+        ) as mock_open:
             args = []
             kwargs = {}
             migratore.Migratore._environ_dot_env(args, kwargs)
