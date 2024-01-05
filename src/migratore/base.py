@@ -93,6 +93,7 @@ class Migratore(object):
         database = hasattr(cls, "_database") and cls._database
         if database:
             return database
+        cls._environ_dot_env(args, kwargs)
         cls._environ(args, kwargs)
         engine = kwargs.get("engine", "mysql")
         debug = kwargs.get("debug", False)
@@ -204,6 +205,58 @@ class Migratore(object):
         sorter = lambda item: TYPE_PRIORITY.get(item[0], 0)
         environ.sort(key=sorter, reverse=True)
         for key, value in environ:
+            key = ALIAS.get(key, key)
+            key_l = key.lower()
+            if key_l in kwargs:
+                continue
+            if not key in VALID_TYPES:
+                continue
+            _type = VALID_TYPES[key]
+            kwargs[key_l] = _type(value)
+
+    @classmethod
+    def _environ_dot_env(cls, args, kwargs, name=".env", encoding="utf-8"):
+        file_path = os.path.abspath(name)
+        file_path = os.path.normpath(file_path)
+
+        exists = os.path.exists(file_path)
+        if not exists:
+            return
+
+        file = open(file_path, "rb")
+        try:
+            data = file.read()
+        finally:
+            file.close()
+        if not data:
+            return
+
+        data = data.decode(encoding)
+        data = data.strip()
+        lines = data.splitlines()
+        lines = [line.strip() for line in lines]
+
+        envs = dict()
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("#"):
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+            if (
+                value.startswith('"')
+                and value.endswith('"')
+                or value.startswith("'")
+                and value.endswith("'")
+            ):
+                value = value[1:-1].replace('\\"', '"')
+            envs[key] = value
+
+        for key, value in legacy.iteritems(envs):
             key = ALIAS.get(key, key)
             key_l = key.lower()
             if key_l in kwargs:
