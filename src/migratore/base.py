@@ -34,6 +34,7 @@ VALID_TYPES = dict(
     USERNAME=str,
     PASSWORD=str,
     DB=str,
+    DB_URL=str,
     FS=str,
     DEBUG=int,
 )
@@ -95,6 +96,7 @@ class Migratore(object):
             return database
         cls._environ_dot_env(args, kwargs)
         cls._environ(args, kwargs)
+        cls._process(args, kwargs)
         engine = kwargs.get("engine", "mysql")
         debug = kwargs.get("debug", False)
         method = getattr(cls, "_get_" + engine)
@@ -265,6 +267,25 @@ class Migratore(object):
                 continue
             _type = VALID_TYPES[key]
             kwargs[key_l] = _type(value)
+
+    @classmethod
+    def _process(cls, args, kwargs):
+        if "db_url" in kwargs:
+            cls._process_db_url(kwargs["db_url"], kwargs)
+
+    @classmethod
+    def _process_db_url(cls, url, kwargs):
+        url_p = legacy.urlparse(url)
+        if not "host" in kwargs:
+            kwargs["host"] = str(url_p.hostname)
+        if not "port" in kwargs and not url_p.port == None:
+            kwargs["port"] = int(url_p.port)
+        if not "username" in kwargs and not url_p.username == None:
+            kwargs["username"] = str(url_p.username)
+        if not "password" in kwargs and not url_p.password == None:
+            kwargs["password"] = str(url_p.password)
+        if not "db" in kwargs:
+            kwargs["db"] = str(url_p.path).strip("/")
 
 
 class Console(object):

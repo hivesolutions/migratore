@@ -76,7 +76,7 @@ class BaseTest(unittest.TestCase):
         ) as mock_open:
             args = []
             kwargs = {}
-            migratore.base.Migratore._environ_dot_env(args, kwargs)
+            migratore.Migratore._environ_dot_env(args, kwargs)
 
             result = kwargs["port"]
             self.assertEqual(type(result), int)
@@ -87,5 +87,79 @@ class BaseTest(unittest.TestCase):
             self.assertEqual(result, "user")
 
             self.assertEqual(len(kwargs), 2)
+
+            self.assertEqual(mock_open.return_value.close.call_count, 1)
+
+    def test__process_db_url(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        mock_data = mock.mock_open(
+            read_data=b"DB_URL=mysql://root:pass@db.host:3000/db_name\n"
+        )
+
+        with mock.patch("os.path.exists", return_value=True), mock.patch(
+            "builtins.open", mock_data, create=True
+        ) as mock_open:
+            args = []
+            kwargs = {}
+            migratore.Migratore._environ_dot_env(args, kwargs)
+            migratore.Migratore._process(args, kwargs)
+
+            result = kwargs["db_url"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "mysql://root:pass@db.host:3000/db_name")
+
+            result = kwargs["host"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "db.host")
+
+            result = kwargs["port"]
+            self.assertEqual(type(result), int)
+            self.assertEqual(result, 3000)
+
+            result = kwargs["username"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "root")
+
+            result = kwargs["password"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "pass")
+
+            result = kwargs["db"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "db_name")
+
+            self.assertEqual(len(kwargs), 6)
+
+            self.assertEqual(mock_open.return_value.close.call_count, 1)
+
+    def test__process_db_url_defaults(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        mock_data = mock.mock_open(read_data=b"DB_URL=mysql://db.host/db_name\n")
+
+        with mock.patch("os.path.exists", return_value=True), mock.patch(
+            "builtins.open", mock_data, create=True
+        ) as mock_open:
+            args = []
+            kwargs = {}
+            migratore.Migratore._environ_dot_env(args, kwargs)
+            migratore.Migratore._process(args, kwargs)
+
+            result = kwargs["db_url"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "mysql://db.host/db_name")
+
+            result = kwargs["host"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "db.host")
+
+            result = kwargs["db"]
+            self.assertEqual(type(result), str)
+            self.assertEqual(result, "db_name")
+
+            self.assertEqual(len(kwargs), 3)
 
             self.assertEqual(mock_open.return_value.close.call_count, 1)
