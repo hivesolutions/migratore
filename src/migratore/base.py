@@ -94,9 +94,7 @@ class Migratore(object):
         database = hasattr(cls, "_database") and cls._database
         if database:
             return database
-        cls._environ_dot_env(args, kwargs)
-        cls._environ(args, kwargs)
-        cls._process(args, kwargs)
+        cls._env(args, kwargs)
         engine = kwargs.get("engine", "mysql")
         debug = kwargs.get("debug", False)
         method = getattr(cls, "_get_" + engine)
@@ -122,7 +120,7 @@ class Migratore(object):
 
     @classmethod
     def get_fs(cls, *args, **kwargs):
-        cls._environ(args, kwargs)
+        cls._env(args, kwargs)
         fs = kwargs.get("fs", "")
         fs = os.path.abspath(fs)
         fs = os.path.normpath(fs)
@@ -200,6 +198,12 @@ class Migratore(object):
         database = mysql.MySQLDatabase(cls, connection, name)
         database.execute("set session transaction isolation level %s" % isolation)
         return database
+
+    @classmethod
+    def _env(cls, args, kwargs):
+        cls._environ_dot_env(args, kwargs)
+        cls._environ(args, kwargs)
+        cls._process(args, kwargs)
 
     @classmethod
     def _environ(cls, args, kwargs):

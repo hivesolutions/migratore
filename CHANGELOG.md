@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.5.1] - 2024-01-06
+
+### Changed
+
+* Propagated `_env` calls and processing
+
 ## [0.5.0] - 2024-01-06
 
 ### Added
