@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Condition of the `DB_URL` processing
 
 ## [0.5.2] - 2024-01-06
 

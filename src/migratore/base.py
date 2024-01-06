@@ -285,17 +285,17 @@ class Migratore(object):
         if not "port" in kwargs or override:
             if url_p.port == None and "port" in kwargs:
                 del kwargs["port"]
-            else:
+            elif not url_p.port == None:
                 kwargs["port"] = int(url_p.port)
         if not "username" in kwargs or override:
             if url_p.username == None and "username" in kwargs:
                 del kwargs["username"]
-            else:
+            elif not url_p.username == None:
                 kwargs["username"] = str(url_p.username)
         if not "password" in kwargs or override:
             if url_p.password == None and "password" in kwargs:
                 del kwargs["password"]
-            else:
+            elif not url_p.password == None:
                 kwargs["password"] = str(url_p.password)
         if not "db" in kwargs or override:
             kwargs["db"] = str(url_p.path).strip("/")
