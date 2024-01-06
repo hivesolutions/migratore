@@ -273,9 +273,9 @@ class Migratore(object):
             kwargs[key_l] = _type(value)
 
     @classmethod
-    def _process(cls, args, kwargs):
+    def _process(cls, args, kwargs, override=True):
         if "db_url" in kwargs:
-            cls._process_db_url(kwargs["db_url"], kwargs)
+            cls._process_db_url(kwargs["db_url"], kwargs, override=override)
 
     @classmethod
     def _process_db_url(cls, url, kwargs, override=True):
