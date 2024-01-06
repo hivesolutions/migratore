@@ -278,17 +278,26 @@ class Migratore(object):
             cls._process_db_url(kwargs["db_url"], kwargs)
 
     @classmethod
-    def _process_db_url(cls, url, kwargs):
+    def _process_db_url(cls, url, kwargs, override=True):
         url_p = legacy.urlparse(url)
-        if not "host" in kwargs:
+        if not "host" in kwargs or override:
             kwargs["host"] = str(url_p.hostname)
-        if not "port" in kwargs and not url_p.port == None:
-            kwargs["port"] = int(url_p.port)
-        if not "username" in kwargs and not url_p.username == None:
-            kwargs["username"] = str(url_p.username)
-        if not "password" in kwargs and not url_p.password == None:
-            kwargs["password"] = str(url_p.password)
-        if not "db" in kwargs:
+        if not "port" in kwargs or override:
+            if url_p.port == None and "port" in kwargs:
+                del kwargs["port"]
+            else:
+                kwargs["port"] = int(url_p.port)
+        if not "username" in kwargs or override:
+            if url_p.username == None and "username" in kwargs:
+                del kwargs["username"]
+            else:
+                kwargs["username"] = str(url_p.username)
+        if not "password" in kwargs or override:
+            if url_p.password == None and "password" in kwargs:
+                del kwargs["password"]
+            else:
+                kwargs["password"] = str(url_p.password)
+        if not "db" in kwargs or override:
             kwargs["db"] = str(url_p.path).strip("/")
 
 
