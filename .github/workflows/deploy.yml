@@ -31,6 +31,10 @@ jobs:
           pip install -r extra.py2.txt
           pip install pymysql
         if: matrix.python-version == '2.7-buster'
+      - run: |
+          pip install black
+          black . --check
+        if: matrix.python-version == '3.11-buster'
       - run: DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" python setup.py test
       - run: pip install twine wheel
       - run: python setup.py sdist bdist_wheel
