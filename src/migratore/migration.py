@@ -42,7 +42,7 @@ class Migration(base.Console):
     def environ(cls):
         args = list()
         kwargs = dict()
-        base.Migratore._environ(args, kwargs)
+        base.Migratore._env(args, kwargs)
         base.Migratore.echo_map(kwargs)
 
     @classmethod
