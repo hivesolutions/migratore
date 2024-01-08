@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for skip of current migration - [#4](https://github.com/hivesolutions/migratore/issues/4)
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.5.5] - 2024-01-08
+
+### Added
+
+* Support for skip of current migration - [#4](https://github.com/hivesolutions/migratore/issues/4)
 
 ## [0.5.4] - 2024-01-08
 
