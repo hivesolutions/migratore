@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Improved handling of the `environ` CLI command
+*
 
 ### Fixed
 
 *
+
+## [0.5.4] - 2024-01-08
+
+### Changed
+
+* Improved handling of the `environ` CLI command
 
 ## [0.5.3] - 2024-01-06
 
