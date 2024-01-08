@@ -85,7 +85,7 @@ class Migration(base.Console):
             db.close()
 
     @classmethod
-    def mark(self, *args, **kwargs):
+    def mark(cls, *args, **kwargs):
         db = base.Migratore.get_db(*args, **kwargs)
         timestamp = db.timestamp()
         timestamp = timestamp or 0
@@ -105,18 +105,25 @@ class Migration(base.Console):
             db.close()
 
     @classmethod
-    def rebuild(self, id, *args, **kwargs):
+    def rebuild(cls, id, *args, **kwargs):
         path = "."
         path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
         _loader.rebuild(id, *args, **kwargs)
 
     @classmethod
-    def upgrade(self, path=None, *args, **kwargs):
+    def upgrade(cls, path=None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
         _loader.upgrade(*args, **kwargs)
+
+    @classmethod
+    def skip(cls, path=None, *args, **kwargs):
+        path = path or "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.skip(*args, **kwargs)
 
     @classmethod
     def generate(cls, path=None):
@@ -172,13 +179,13 @@ class Migration(base.Console):
         duration = execution["duration"]
         start_s = execution["start_s"]
         end_s = execution["end_s"]
-        timstamp_s = cls._time_s(timestamp)
+        timestamp_s = cls._time_s(timestamp)
 
         duration_l = "second" if duration == 1 else "seconds"
 
         base.Migratore.echo("ID          : %s" % object_id)
         base.Migratore.echo("UUID        : %s" % _uuid)
-        base.Migratore.echo("Timestamp   : %d (%s)" % (timestamp, timstamp_s))
+        base.Migratore.echo("Timestamp   : %d (%s)" % (timestamp, timestamp_s))
         base.Migratore.echo("Description : %s" % description)
         base.Migratore.echo("Operation   : %s" % operation)
         base.Migratore.echo("Operator    : %s" % operator)
@@ -204,8 +211,13 @@ class Migration(base.Console):
         if self.description:
             self.echo("%s" % self.description)
 
-    def partial(self, db):
+    def run_partial(self, db):
         self.echo("Running partial '%s'" % self.uuid)
+        if self.description:
+            self.echo("%s" % self.description)
+
+    def run_skip(self, db):
+        self.echo("Skipping migration '%s'" % self.uuid)
         if self.description:
             self.echo("%s" % self.description)
 
@@ -274,10 +286,10 @@ class MarkMigration(Migration):
         self.timestamp = int(time.time())
         self.description = "marks the initial stage of the data source"
 
-    def start(self, *args, **kwargs):
+    def start(cls, *args, **kwargs):
         db = base.Migratore.get_db()
         table = db.get_table("migratore")
         count = table.count(result="success")
         if count > 0:
             return
-        return Migration.start(self, *args, **kwargs)
+        return Migration.start(cls, *args, **kwargs)

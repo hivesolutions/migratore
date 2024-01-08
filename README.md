@@ -34,6 +34,7 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `trace [id]` - Prints the traceback for the error execution with the provided id
 * `rebuild [id]` - Run the partial execution of the migration with the given id
 * `upgrade [path]` - Executes the pending migrations using the defined directory or current
+* `skip [path]` - Skips the current migration (next to be run) using the defined directory or current
 * `generate [path]` - Generates a new migration file into the target path
 
 ## Examples

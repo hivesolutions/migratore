@@ -56,7 +56,51 @@ class Loader(object):
     def rebuild(self, id, *args, **kwargs):
         self.load()
         migration = self.migrations_m[id]
-        migration.start(operation="partial")
+        migration.start(operation="run_partial")
+
+    def skip(self, *args, **kwargs):
+        migration = self.get_current_migration()
+        migration.start(operation="run_skip")
+
+    def get_current_migration(self):
+        migrations = self.load()
+
+        db = base.Migratore.get_db()
+        try:
+            timestamp = db.timestamp()
+            timestamp = timestamp or 0
+            for migration in migrations:
+                if migration.timestamp > timestamp:
+                    return migration
+        finally:
+            db.close()
+
+        raise RuntimeError("No current migration found")
+
+    def get_migration(self, timestamp):
+        migrations = self.load()
+        for migration in migrations:
+            if migration.timestamp == timestamp:
+                return migration
+        raise RuntimeError("No migration found for timestamp %d" % timestamp)
+
+    def get_migration_by_uuid(self, uuid):
+        migrations = self.load()
+        for migration in migrations:
+            if migration.uuid == uuid:
+                return migration
+        raise RuntimeError("No migration found for UUID %s" % uuid)
+
+    def get_migration_by_any(self, timestamp_or_uuid):
+        migrations = self.load()
+        for migration in migrations:
+            if migration.timestamp == timestamp_or_uuid:
+                return migration
+            if migration.uuid == timestamp_or_uuid:
+                return migration
+        raise RuntimeError(
+            "No migration found for identifier %s" % str(timestamp_or_uuid)
+        )
 
 
 class DirectoryLoader(Loader):

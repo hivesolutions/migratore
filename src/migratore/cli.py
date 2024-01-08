@@ -26,6 +26,9 @@ def run_help():
     print(
         "  upgrade [path]  Executes the pending migrations using the defined directory or current"
     )
+    print(
+        "  skip [path]     Skips the current migration (next to be run) using the defined directory or current"
+    )
     print("  generate [path] Generates a new migration file into the target path")
 
 
@@ -58,11 +61,15 @@ def run_rebuild(id):
 
 
 def run_upgrade(path=None):
-    migration.Migration.upgrade(path)
+    migration.Migration.upgrade(path=path)
+
+
+def run_skip(path=None):
+    migration.Migration.skip(path=path)
 
 
 def run_generate(path=None):
-    migration.Migration.generate(path)
+    migration.Migration.generate(path=path)
 
 
 def main():
