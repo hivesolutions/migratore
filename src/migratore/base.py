@@ -94,7 +94,7 @@ class Migratore(object):
         database = hasattr(cls, "_database") and cls._database
         if database:
             return database
-        cls._env(args, kwargs)
+        cls._environ(args, kwargs)
         engine = kwargs.get("engine", "mysql")
         debug = kwargs.get("debug", False)
         method = getattr(cls, "_get_" + engine)
@@ -120,7 +120,7 @@ class Migratore(object):
 
     @classmethod
     def get_fs(cls, *args, **kwargs):
-        cls._env(args, kwargs)
+        cls._environ(args, kwargs)
         fs = kwargs.get("fs", "")
         fs = os.path.abspath(fs)
         fs = os.path.normpath(fs)
@@ -200,13 +200,13 @@ class Migratore(object):
         return database
 
     @classmethod
-    def _env(cls, args, kwargs):
+    def _environ(cls, args, kwargs):
         cls._environ_dot_env(args, kwargs)
-        cls._environ(args, kwargs)
+        cls._environ_system(args, kwargs)
         cls._process(args, kwargs)
 
     @classmethod
-    def _environ(cls, args, kwargs):
+    def _environ_system(cls, args, kwargs):
         environ = legacy.items(os.environ)
         sorter = lambda item: TYPE_PRIORITY.get(item[0], 0)
         environ.sort(key=sorter, reverse=True)
