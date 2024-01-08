@@ -248,7 +248,7 @@ class Migration(base.Console):
         finally:
             self.cleanup(db)
 
-        operation_s = operation.title()
+        operation_s = operation.title().replace("_", " ")
 
         end = time.time()
         start = int(start)
