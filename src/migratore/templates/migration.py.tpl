@@ -3,6 +3,7 @@
 
 import migratore
 
+
 class Migration(migratore.Migration):
 
     def __init__(self):
