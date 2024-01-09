@@ -1,6 +1,6 @@
 # [![Migratore](res/logo.png)](http://migratore.hive.pt)
 
-Simple migration framework / infra-structure for SQL based databases.
+Simple migration framework / infra-structure for SQL-based databases.
 
 ## Installation
 
@@ -20,9 +20,10 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `PORT` - TCP port to be used in the connection with the database system
 * `UNIX_SOCKET` - Filesystem path to the UNIX socket file to be used in connection
 * `DB` - Name of the database used as the migration target
-* `USERNAME` - Username for authentication in database
-* `PASSWORD` - Password to be used for authentication in database
+* `USERNAME` - Username for authentication in the database
+* `PASSWORD` - Password to be used for authentication in the database
 * `FS` - Base file system path for file migration (may depend on migration context)
+* `DB_URL`- The database connection URL following the format `protocol://username:password@host:port/db`
 
 ## Commands
 
