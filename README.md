@@ -23,6 +23,7 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `USERNAME` - Username for authentication in the database
 * `PASSWORD` - Password to be used for authentication in the database
 * `FS` - Base file system path for file migration (may depend on migration context)
+* `DB_URL`- The database connection URL following the format `protocol://username:password@host:port/db`
 
 ## Commands
 
