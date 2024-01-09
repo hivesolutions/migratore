@@ -15,4 +15,5 @@ class Migration(migratore.Migration):
     def run(self, db):
         migratore.Migration.run(self, db)
 
+
 migration = Migration()
