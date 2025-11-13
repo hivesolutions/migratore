@@ -10,14 +10,14 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          "2.7-bullseye",
-          "3.5-bullseye",
-          "3.6-bullseye",
-          "3.7-bullseye",
-          "3.8-bullseye",
-          "3.9-bullseye",
-          "3.10-bullseye",
-          "3.11-bullseye",
+          "2.7",
+          "3.5",
+          "3.6",
+          "3.7",
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
           rc
         ]
     runs-on: ubuntu-latest
