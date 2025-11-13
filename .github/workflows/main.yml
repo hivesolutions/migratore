@@ -45,7 +45,7 @@ jobs:
       - run: |
           pip install black
           black . --check
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.12'
       - run: |
           pip install pytest
           DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" pytest
