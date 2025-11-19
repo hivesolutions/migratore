@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for the `dry_upgrade` operation
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.5.6] - 2025-11-19
+
+### Added
+
+* Support for the `dry_upgrade` operation
 
 ## [0.5.5] - 2024-01-08
 
