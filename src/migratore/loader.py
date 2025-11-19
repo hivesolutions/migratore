@@ -64,7 +64,7 @@ class Loader(object):
                 is_valid = migration.timestamp > timestamp
                 if not is_valid:
                     continue
-                print(migration.timestamp)
+                print(migration)
         finally:
             db.close()
 

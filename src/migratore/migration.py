@@ -38,6 +38,9 @@ class Migration(base.Console):
     def __ne__(self, value):
         return self.timestamp != value.timestamp
 
+    def __repr__(self):
+        return "<Migration %s %s %s>" % (self.uuid, self.timestamp, self.description)
+
     @classmethod
     def environ(cls):
         args = list()
