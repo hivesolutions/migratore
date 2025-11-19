@@ -119,6 +119,13 @@ class Migration(base.Console):
         _loader.upgrade(*args, **kwargs)
 
     @classmethod
+    def dry_upgrade(cls, path=None, *args, **kwargs):
+        path = path or "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.dry_upgrade(*args, **kwargs)
+
+    @classmethod
     def skip(cls, path=None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)

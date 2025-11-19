@@ -53,6 +53,21 @@ class Loader(object):
         finally:
             db.close()
 
+    def dry_upgrade(self, *args, **kwargs):
+        migrations = self.load()
+
+        db = base.Migratore.get_db(*args, **kwargs)
+        try:
+            timestamp = db.timestamp()
+            timestamp = timestamp or 0
+            for migration in migrations:
+                is_valid = migration.timestamp > timestamp
+                if not is_valid:
+                    continue
+                print(migration.timestamp)
+        finally:
+            db.close()
+
     def rebuild(self, id, *args, **kwargs):
         self.load()
         migration = self.migrations_m[id]
