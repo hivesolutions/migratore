@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for rollback of the `Migration`
-* Support for the `SAFE` configuration value (controls rollback)
+*
 
 ### Changed
 
@@ -19,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.5.7] - 2025-11-28
+
+### Added
+
+* Support for rollback of the `Migration`
+* Support for the `SAFE` configuration value (controls rollback)
 
 ## [0.5.6] - 2025-11-19
 
