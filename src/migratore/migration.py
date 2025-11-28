@@ -234,6 +234,10 @@ class Migration(base.Console):
     def cleanup(self, db):
         self.echo("Cleaning up...")
 
+    def rollback(self, db):
+        self.echo("Rolling back operation...")
+        db.rollback()
+
     def _start(self, db, operation, operator):
         cls = self.__class__
 
@@ -246,7 +250,10 @@ class Migration(base.Console):
         try:
             method(db)
         except Exception as exception:
-            db.rollback()
+            if db.safe:
+                db.rollback()
+            else:
+                self.rollback(db)
             lines = traceback.format_exc().splitlines()
             lines_s = "\n".join(lines)
             result = "error"

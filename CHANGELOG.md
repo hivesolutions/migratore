@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Support for rollback of the `Migration`
+* Support for the `SAFE` configuration value (controls rollback)
 
 ### Changed
 

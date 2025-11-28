@@ -36,6 +36,7 @@ VALID_TYPES = dict(
     DB=str,
     DB_URL=str,
     FS=str,
+    SAFE=int,
     DEBUG=int,
 )
 """ The dictionary defining the names and the expected data types
@@ -57,6 +58,7 @@ TYPE_PRIORITY = dict(
     DB_NAME=10,
     DB=1,
     FS=1,
+    SAFE=1,
     DEBUG=1,
 )
 """ The map/dictionary that defines the priority for each of the possible
@@ -96,9 +98,11 @@ class Migratore(object):
             return database
         cls._environ(args, kwargs)
         engine = kwargs.get("engine", "mysql")
+        safe = kwargs.get("safe", True)
         debug = kwargs.get("debug", False)
         method = getattr(cls, "_get_" + engine)
         database = method(*args, **kwargs)
+        database.safe = safe
         database.debug = debug
         database.open()
         cls._database = database
@@ -356,11 +360,18 @@ class Console(object):
 
 class Database(Console):
     def __init__(
-        self, owner=None, connection=None, name=None, debug=False, config=DEFAULT_CONFIG
+        self,
+        owner=None,
+        connection=None,
+        name=None,
+        safe=True,
+        debug=False,
+        config=DEFAULT_CONFIG,
     ):
         self.owner = owner
         self.connection = connection
         self.name = name
+        self.safe = safe
         self.debug = debug
         self.config = config
         self.engine = "undefined"
@@ -791,9 +802,9 @@ class Table(Console):
                 continue
 
             ratio = float(index) / float(count)
-            pecentage = int(ratio * 100)
+            percentage = int(ratio * 100)
 
-            self.percent(title, pecentage)
+            self.percent(title, percentage)
 
             index += 1
 
@@ -830,9 +841,9 @@ class Table(Console):
                 continue
 
             ratio = float(index) / float(count)
-            pecentage = int(ratio * 100)
+            percentage = int(ratio * 100)
 
-            self.percent(title, pecentage)
+            self.percent(title, percentage)
 
         if not title:
             return
