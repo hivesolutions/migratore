@@ -49,4 +49,4 @@ jobs:
           pip install pytest
           DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" pytest
       - run: DB_NAME=migratore_test DB_UNIX_SOCKET="/var/run/mysqld/mysqld.sock" DB_USERNAME=root DB_PASSWORD="" python setup.py test
-        if: ${{ !contains(fromJson('["3.9", "3.10", "3.11", "3.12","latest"]'), matrix.python-version) }}
+        if: ${{ !contains(fromJson('["3.9", "3.10", "3.11", "3.12", "latest"]'), matrix.python-version) }}
