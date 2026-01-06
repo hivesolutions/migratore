@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import uuid
 import time
 import datetime
@@ -115,6 +116,13 @@ class Migration(base.Console):
         _loader.rebuild(id, *args, **kwargs)
 
     @classmethod
+    def touch(cls, id, *args, **kwargs):
+        path = "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.touch(id, *args, **kwargs)
+
+    @classmethod
     def upgrade(cls, path=None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)
@@ -158,6 +166,36 @@ class Migration(base.Console):
         finally:
             file.close()
         base.Migratore.echo("Migration file '%s' generated" % path)
+
+    @classmethod
+    def touch_file(cls, path):
+        path = os.path.abspath(path)
+        if not os.path.exists(path):
+            raise RuntimeError("Migration file '%s' does not exist" % path)
+
+        new_timestamp = int(time.time())
+
+        with open(path, "rb") as file:
+            contents = file.read()
+        contents_str = contents.decode("utf-8")
+
+        pattern = r"(self\.timestamp\s*=\s*)\d+"
+        if not re.search(pattern, contents_str):
+            raise RuntimeError(
+                "Could not find 'self.timestamp = ...' in migration file"
+            )
+        new_contents_str = re.sub(pattern, r"\g<1>%d" % new_timestamp, contents_str)
+
+        with open(path, "wb") as file:
+            file.write(new_contents_str.encode("utf-8"))
+
+        dir_path = os.path.dirname(path)
+        new_filename = "%d.py" % new_timestamp
+        new_path = os.path.join(dir_path, new_filename)
+
+        os.rename(path, new_path)
+
+        base.Migratore.echo("Migration touched: '%s' -> '%s'" % (path, new_path))
 
     @classmethod
     def template(cls, path, *args, **kwargs):

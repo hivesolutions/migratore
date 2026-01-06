@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
+import re
+import shutil
+import tempfile
 import unittest
 
 import migratore
@@ -87,3 +91,51 @@ class MigrationTest(unittest.TestCase):
         self.assertTrue(migration_unsafe.rollback_called)
         self.assertEqual(result_unsafe, "error")
         self.assertTrue(fake_db_unsafe.commit_called)
+
+    def test_touch(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            old_timestamp = 1391804600
+            migration_content = (
+                """#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import migratore
+
+class Migration(migratore.Migration):
+    def __init__(self):
+        migratore.Migration.__init__(self)
+        self.uuid = "test-uuid"
+        self.timestamp = %d
+        self.description = "test migration"
+
+migration = Migration()
+"""
+                % old_timestamp
+            )
+
+            old_path = os.path.join(temp_dir, "%d.py" % old_timestamp)
+            with open(old_path, "wb") as file:
+                file.write(migration_content.encode("utf-8"))
+
+            migratore.Migration.touch_file(old_path)
+
+            self.assertFalse(os.path.exists(old_path))
+
+            files = os.listdir(temp_dir)
+            self.assertEqual(len(files), 1)
+
+            new_filename = files[0]
+            self.assertTrue(new_filename.endswith(".py"))
+            new_timestamp = int(new_filename[:-3])
+            self.assertGreater(new_timestamp, old_timestamp)
+
+            new_path = os.path.join(temp_dir, new_filename)
+            with open(new_path, "rb") as file:
+                new_content = file.read().decode("utf-8")
+
+            match = re.search(r"self\.timestamp\s*=\s*(\d+)", new_content)
+            self.assertIsNotNone(match)
+            self.assertEqual(int(match.group(1)), new_timestamp)
+        finally:
+            shutil.rmtree(temp_dir)

@@ -24,6 +24,9 @@ def run_help():
         "  rebuild [id]    Run the partial execution of the migration with the given id"
     )
     print(
+        "  touch [id]      Touches a migration updating its timestamp to current time"
+    )
+    print(
         "  upgrade [path]  Executes the pending migrations using the defined directory or current"
     )
     print(
@@ -61,6 +64,10 @@ def run_trace(id):
 
 def run_rebuild(id):
     migration.Migration.rebuild(id)
+
+
+def run_touch(id):
+    migration.Migration.touch(id)
 
 
 def run_upgrade(path=None):

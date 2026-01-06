@@ -11,6 +11,7 @@ class Loader(object):
     def __init__(self):
         self.migrations = []
         self.migrations_m = {}
+        self.migrations_path = {}
 
     def __cmp__(self, value):
         return self.timestamp.__cmp__(value.timestamp)
@@ -71,7 +72,18 @@ class Loader(object):
     def rebuild(self, id, *args, **kwargs):
         self.load()
         migration = self.migrations_m[id]
+        if not migration:
+            raise RuntimeError("Migration '%s' not found" % id)
         migration.start(operation="run_partial")
+
+    def touch(self, id, *args, **kwargs):
+        from . import migration
+
+        self.load()
+        path = self.migrations_path.get(id)
+        if not path:
+            raise RuntimeError("Migration '%s' not found" % id)
+        migration.Migration.touch_file(path)
 
     def skip(self, *args, **kwargs):
         migration = self.get_current_migration()
@@ -135,19 +147,23 @@ class DirectoryLoader(Loader):
             base, extension = os.path.splitext(file)
             if not extension == ".py":
                 continue
-            names.append(base)
+            names.append((base, file))
 
-        for name in names:
+        for name, file in names:
             module = __import__(name)
-            modules.append(module)
+            modules.append((module, file))
 
-        for module in modules:
+        for module, file in modules:
             if not hasattr(module, "migration"):
                 continue
             migration = getattr(module, "migration")
             self.migrations.append(migration)
             self.migrations_m[migration.uuid] = migration
             self.migrations_m[str(migration.timestamp)] = migration
+            self.migrations_path[migration.uuid] = os.path.join(self.path, file)
+            self.migrations_path[str(migration.timestamp)] = os.path.join(
+                self.path, file
+            )
 
         self.migrations.sort(key=lambda item: item.timestamp)
         return self.migrations
