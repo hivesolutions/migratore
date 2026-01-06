@@ -53,7 +53,7 @@ Before committing, ensure that the following operations items check:
 To create a new release follow the following steps:
 
 - Increment (look at `CHANGELOG.md` for semver changes) the `info.VERSION` version in `src/info.py`.
-- Move all the items in the `CHANGELOG.md` into a new section with the new version number and date, create new empty sub-sections (Added, Changed and Fixed) to the Unreleased section with a single empty item.
+- Move all the Unreleased items in the `CHANGELOG.md` into a new section with the new version number and date, and create new empty sub-sections (Added, Changed and Fixed) for the Unreleased section with a single empty item.
 - Create a commit with the following message `version: $VERSION_NUMBER`.
 - Push the commit.
 - Create a new tag with the value fo the new version number `$VERSION_NUMBER`.
