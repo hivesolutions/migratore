@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* New `touch` command to update a migration's timestamp to the current time
-* CLI tests in `test/cli.py` for command resolution and various CLI operations
+*
 
 ### Changed
 
@@ -19,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.5.8] - 2026-01-06
+
+### Added
+
+* New `touch` command to update a migration's timestamp to the current time
+* CLI tests in `test/cli.py` for command resolution and various CLI operations
 
 ## [0.5.7] - 2025-11-28
 
