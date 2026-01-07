@@ -6,6 +6,8 @@ import unittest
 
 import migratore
 
+from .mocks import FakeTable
+
 try:
     import unittest.mock as mock
 except ImportError:
@@ -163,3 +165,62 @@ class BaseTest(unittest.TestCase):
             self.assertEqual(len(kwargs), 3)
 
             self.assertEqual(mock_open.return_value.close.call_count, 1)
+
+
+class BaseMocksTest(unittest.TestCase):
+    def test_exist_uuid_returns_false_for_nonexistent(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+
+        with mock.patch.object(db, "get_table", return_value=FakeTable(records=[])):
+            result = db.exist_uuid("nonexistent-uuid")
+            self.assertEqual(result, False)
+
+    def test_exist_uuid_returns_true_for_existing(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        def get_records(where):
+            if "test-uuid" in where and "success" in where:
+                return [{"uuid": "test-uuid", "result": "success"}]
+            return []
+
+        db = migratore.Database()
+
+        with mock.patch.object(
+            db, "get_table", return_value=FakeTable(records=get_records)
+        ):
+            result = db.exist_uuid("test-uuid")
+            self.assertEqual(result, True)
+
+    def test_exist_uuid_respects_result_parameter(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        def get_records(where):
+            if "test-uuid" in where and "error" in where:
+                return [{"uuid": "test-uuid", "result": "error"}]
+            return []
+
+        db = migratore.Database()
+
+        with mock.patch.object(
+            db, "get_table", return_value=FakeTable(records=get_records)
+        ):
+            result = db.exist_uuid("test-uuid")
+            self.assertEqual(result, False)
+
+            result = db.exist_uuid("test-uuid", result="error")
+            self.assertEqual(result, True)
+
+    def test_exist_uuid_handles_none_result(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+
+        with mock.patch.object(db, "get_table", return_value=FakeTable(records=None)):
+            result = db.exist_uuid("any-uuid")
+            self.assertEqual(result, False)

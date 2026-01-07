@@ -465,6 +465,11 @@ class Database(Console):
         )
         return timestamp
 
+    def exist_uuid(self, uuid, result="success"):
+        table = self.get_table("migratore")
+        result = table.get(where="uuid = '%s' and result = '%s'" % (uuid, result))
+        return bool(result)
+
     def ensure_system(self):
         exists = self.exists_table("migratore")
         if not exists:

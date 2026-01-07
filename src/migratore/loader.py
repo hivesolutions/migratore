@@ -46,6 +46,7 @@ class Loader(object):
             timestamp = timestamp or 0
             for migration in migrations:
                 is_valid = migration.timestamp > timestamp
+                is_valid = is_valid and not db.exist_uuid(migration.uuid)
                 if not is_valid:
                     continue
                 result = migration.start()
@@ -63,6 +64,7 @@ class Loader(object):
             timestamp = timestamp or 0
             for migration in migrations:
                 is_valid = migration.timestamp > timestamp
+                is_valid = is_valid and not db.exist_uuid(migration.uuid)
                 if not is_valid:
                     continue
                 print(migration)
@@ -97,7 +99,9 @@ class Loader(object):
             timestamp = db.timestamp()
             timestamp = timestamp or 0
             for migration in migrations:
-                if migration.timestamp > timestamp:
+                is_valid = migration.timestamp > timestamp
+                is_valid = is_valid and not db.exist_uuid(migration.uuid)
+                if is_valid:
                     return migration
         finally:
             db.close()
