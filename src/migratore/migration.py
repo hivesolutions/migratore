@@ -219,10 +219,12 @@ class Migration(base.Console):
         timestamp = int(timestamp)
 
         descriptions = [
-            migration.description for migration in migrations if migration.description
+            (migration.description, migration.uuid)
+            for migration in migrations
+            if migration.description
         ]
         description = "Squashed migration:\n" + "\n".join(
-            "  - " + desc for desc in descriptions
+            "  - " + "%s (%s)" % (line, uuid) for line, uuid in descriptions
         )
 
         method_bodies = dict()
