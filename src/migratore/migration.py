@@ -221,9 +221,9 @@ class Migration(base.Console):
         descriptions = [
             migration.description for migration in migrations if migration.description
         ]
-        description = "squashed migration: " + "; ".join(descriptions)
-        if len(description) > 200:
-            description = description[:197] + "..."
+        description = "Squashed migration:\n" + "\n".join(
+            "  - " + desc for desc in descriptions
+        )
 
         method_bodies = dict()
         for method_name in cls.SQUASHABLE_METHODS:
@@ -470,7 +470,11 @@ class Migration(base.Console):
 
     @classmethod
     def _generate_squashed_migration(cls, _uuid, timestamp, description, method_bodies):
-        description = description.replace('"', '\\"')
+        description_lines = description.split("\n")
+        description_str = '"""\n'
+        for line in description_lines:
+            description_str += "        " + line + "\n"
+        description_str += '        """'
 
         lines = [
             "#!/usr/bin/python",
@@ -485,7 +489,7 @@ class Migration(base.Console):
             "        migratore.Migration.__init__(self)",
             '        self.uuid = "%s"' % _uuid,
             "        self.timestamp = %d" % timestamp,
-            '        self.description = "%s"' % description,
+            "        self.description = %s" % description_str,
         ]
 
         for method_name in cls.SQUASHABLE_METHODS:

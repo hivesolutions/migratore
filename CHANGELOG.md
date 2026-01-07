@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Improved `squash` command description format to use multiline strings with newlines for better readability
 
 ### Fixed
 
