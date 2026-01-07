@@ -13,6 +13,10 @@ from . import loader
 
 
 class Migration(base.Console):
+
+    SQUASHABLE_METHODS = ["run", "run_partial", "run_skip", "cleanup", "rollback"]
+    """ Methods that can be squashed into a single migration """
+
     def __init__(self, uuid=None, timestamp=None, description=None):
         self.uuid = uuid
         self.timestamp = timestamp
@@ -123,6 +127,13 @@ class Migration(base.Console):
         _loader.touch(id, *args, **kwargs)
 
     @classmethod
+    def squash(cls, start, end, output=None, path=None):
+        path = path or "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.squash(start, end, output=output)
+
+    @classmethod
     def upgrade(cls, path=None, *args, **kwargs):
         path = path or "."
         path = os.path.abspath(path)
@@ -196,6 +207,70 @@ class Migration(base.Console):
         os.rename(path, new_path)
 
         base.Migratore.echo("Migration touched: '%s' -> '%s'" % (path, new_path))
+
+    @classmethod
+    def squash_files(cls, migrations, migrations_path, output=None):
+        if not migrations:
+            raise RuntimeError("No migrations found in the specified range")
+
+        _uuid = uuid.uuid4()
+        _uuid = str(_uuid)
+        timestamp = time.time()
+        timestamp = int(timestamp)
+
+        descriptions = [
+            migration.description for migration in migrations if migration.description
+        ]
+        description = "squashed migration: " + "; ".join(descriptions)
+        if len(description) > 200:
+            description = description[:197] + "..."
+
+        method_bodies = dict()
+        for method_name in cls.SQUASHABLE_METHODS:
+            method_bodies[method_name] = []
+
+        for migration in migrations:
+            migration_path = migrations_path.get(migration.uuid)
+            if not migration_path:
+                migration_path = migrations_path.get(str(migration.timestamp))
+            if migration_path:
+                for method_name in cls.SQUASHABLE_METHODS:
+                    result = cls._extract_method_body(migration_path, method_name)
+                    if not result:
+                        continue
+                    body, start_line, end_line = result
+                    method_bodies[method_name].append(
+                        (
+                            migration.uuid,
+                            migration.timestamp,
+                            method_name,
+                            start_line,
+                            end_line,
+                            body,
+                        )
+                    )
+
+        output = output or str(timestamp) + ".py"
+        squashed_content = cls._generate_squashed_migration(
+            _uuid, timestamp, description, method_bodies
+        )
+
+        file = open(output, "wb")
+        try:
+            file.write(squashed_content.encode("utf-8"))
+        finally:
+            file.close()
+
+        base.Migratore.echo("Squashed migration file '%s' generated" % output)
+        base.Migratore.echo("Squashed migrations:")
+        for migration in migrations:
+            base.Migratore.echo("  - %s (%s)" % (migration.uuid, migration.timestamp))
+
+        squashed_methods = [
+            method for method in cls.SQUASHABLE_METHODS if method_bodies[method]
+        ]
+        if squashed_methods:
+            base.Migratore.echo("Squashed methods: %s" % ", ".join(squashed_methods))
 
     @classmethod
     def template(cls, path, *args, **kwargs):
@@ -332,6 +407,120 @@ class Migration(base.Console):
         db.commit()
 
         return result
+
+    @classmethod
+    def _extract_method_body(cls, file_path, method_name, encoding="utf-8"):
+        with open(file_path, "rb") as file:
+            contents = file.read()
+        contents = contents.decode(encoding)
+
+        pattern = r"def %s\s*\(\s*self\s*,\s*db\s*\)\s*:" % re.escape(method_name)
+        match = re.search(pattern, contents)
+        if not match:
+            return None
+
+        method_start_line = contents[: match.start()].count("\n") + 1
+
+        after_method = contents[match.end() :]
+        lines = after_method.split("\n")
+
+        body_lines = []
+        base_indent = None
+        line_indices = []
+        current_line_num = method_start_line
+
+        for line in lines:
+            current_line_num += 1
+
+            if not line.strip() and base_indent == None:
+                continue
+
+            if base_indent == None and line.strip():
+                stripped = line.lstrip()
+                base_indent = len(line) - len(stripped)
+
+            if line.strip():
+                current_indent = len(line) - len(line.lstrip())
+                if current_indent < base_indent:
+                    break
+                if line.strip().startswith("def ") or line.strip().startswith("class "):
+                    break
+
+            parent_call_patterns = [
+                "Migration.%s(self, db)" % method_name,
+                "migratore.Migration.%s(self, db)" % method_name,
+            ]
+            if any(pattern in line for pattern in parent_call_patterns):
+                continue
+
+            body_lines.append(line)
+            line_indices.append(current_line_num)
+
+        while body_lines and not body_lines[-1].strip():
+            body_lines.pop()
+            line_indices.pop()
+
+        if not body_lines:
+            return None
+
+        start_line = line_indices[0] if line_indices else 0
+        end_line = line_indices[-1] if line_indices else 0
+
+        return ("\n".join(body_lines), start_line, end_line)
+
+    @classmethod
+    def _generate_squashed_migration(cls, _uuid, timestamp, description, method_bodies):
+        description = description.replace('"', '\\"')
+
+        lines = [
+            "#!/usr/bin/python",
+            "# -*- coding: utf-8 -*-",
+            "",
+            "import migratore",
+            "",
+            "",
+            "class Migration(migratore.Migration):",
+            "",
+            "    def __init__(self):",
+            "        migratore.Migration.__init__(self)",
+            '        self.uuid = "%s"' % _uuid,
+            "        self.timestamp = %d" % timestamp,
+            '        self.description = "%s"' % description,
+        ]
+
+        for method_name in cls.SQUASHABLE_METHODS:
+            bodies = method_bodies.get(method_name, [])
+
+            if not bodies and method_name != "run":
+                continue
+
+            lines.append("")
+            lines.append("    def %s(self, db):" % method_name)
+            lines.append("        migratore.Migration.%s(self, db)" % method_name)
+
+            if bodies:
+                for (
+                    migration_uuid,
+                    timestamp,
+                    orig_method,
+                    start_line,
+                    end_line,
+                    body,
+                ) in bodies:
+                    lines.append("")
+                    lines.append(
+                        "        # -*- Migration %s (timestamp: %d) [%s():%d-%d] -*-"
+                        % (migration_uuid, timestamp, orig_method, start_line, end_line)
+                    )
+                    lines.append(body)
+            else:
+                lines.append("")
+
+        lines.append("")
+        lines.append("migration = Migration()")
+        lines.append("")
+
+        return "\n".join(lines)
 
 
 class MarkMigration(Migration):

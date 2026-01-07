@@ -91,6 +91,18 @@ class Loader(object):
         migration = self.get_current_migration()
         migration.start(operation="run_skip")
 
+    def squash(self, start, end, output=None, *args, **kwargs):
+        from . import migration
+
+        migrations = self.get_migrations_range(start, end)
+        base.Migratore.echo(
+            "Squashing %d migrations from '%s' to '%s'..."
+            % (len(migrations), start, end)
+        )
+        migration.Migration.squash_files(
+            migrations, self.migrations_path, output=output
+        )
+
     def get_current_migration(self):
         migrations = self.load()
 
@@ -132,6 +144,49 @@ class Loader(object):
         raise RuntimeError(
             "No migration found for identifier %s" % str(timestamp_or_uuid)
         )
+
+    def get_migrations_range(self, start, end):
+        migrations = self.load()
+
+        start_migration = None
+        end_migration = None
+
+        for migration in migrations:
+            if self._matches_identifier(migration, start):
+                start_migration = migration
+            if self._matches_identifier(migration, end):
+                end_migration = migration
+
+        if not start_migration:
+            raise RuntimeError("Start migration '%s' not found" % start)
+        if not end_migration:
+            raise RuntimeError("End migration '%s' not found" % end)
+
+        if start_migration.timestamp > end_migration.timestamp:
+            start_migration, end_migration = end_migration, start_migration
+
+        result = []
+        for migration in migrations:
+            if (
+                migration.timestamp >= start_migration.timestamp
+                and migration.timestamp <= end_migration.timestamp
+            ):
+                result.append(migration)
+
+        return result
+
+    def _matches_identifier(self, migration, identifier):
+        try:
+            timestamp = int(identifier)
+            if migration.timestamp == timestamp:
+                return True
+        except (ValueError, TypeError):
+            pass
+
+        if migration.uuid == identifier:
+            return True
+
+        return False
 
 
 class DirectoryLoader(Loader):

@@ -33,9 +33,13 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `environ` - Displays the current environment in the standard output
 * `list` - Lists the executed migrations on the current database
 * `errors` - Lists the various errors from migration of the database
+* `mark` - Marks the associated data source with the current timestamp
 * `trace [id]` - Prints the traceback for the error execution with the provided id
 * `rebuild [id]` - Run the partial execution of the migration with the given id
+* `touch [id]` - Touches a migration file updating its timestamp to the current time
+* `squash [start] [end] <output>` - Combines multiple migrations into a single file
 * `upgrade [path]` - Executes the pending migrations using the defined directory or current
+* `dry_upgrade [path]` - Prints the pending migrations without executing them
 * `skip [path]` - Skips the current migration (next to be run) using the defined directory or current
 * `generate [path]` - Generates a new migration file into the target path
 

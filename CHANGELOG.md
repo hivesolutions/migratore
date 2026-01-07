@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* New `squash` command to combine multiple migrations into a single file, supporting all migration methods (`run`, `run_partial`, `run_skip`, `cleanup`, `rollback`)
 
 ### Changed
 

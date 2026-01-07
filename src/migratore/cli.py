@@ -27,6 +27,9 @@ def run_help():
         "  touch [id]      Touches a migration updating its timestamp to current time"
     )
     print(
+        "  squash [start] [end] <output>  Combines multiple migrations into a single file"
+    )
+    print(
         "  upgrade [path]  Executes the pending migrations using the defined directory or current"
     )
     print(
@@ -68,6 +71,10 @@ def run_rebuild(id):
 
 def run_touch(id):
     migration.Migration.touch(id)
+
+
+def run_squash(start, end, output=None):
+    migration.Migration.squash(start=start, end=end, output=output)
 
 
 def run_upgrade(path=None):
