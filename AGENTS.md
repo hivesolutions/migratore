@@ -1,8 +1,8 @@
 # AGENTS.md file
 
-## Virtual Environment (venv)
+## Python Virtual Environment (venv)
 
-The virtual environment for this repository is typically located in `.venv`.
+The Python virtual environment for this repository is typically located in `.venv`.
 
 ## Formatting
 
