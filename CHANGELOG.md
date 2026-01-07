@@ -9,16 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.5.9] - 2026-01-07
+
+### Added
+
 * New `exist_uuid` method in `Database` class to check if a migration UUID already exists
 * Loader tests in `test/loader.py` for `dry_upgrade` and `exist_uuid` functionality
 
 ### Changed
 
 * Improved `dry_upgrade` to also check UUID existence, not just timestamp
-
-### Fixed
-
-*
 
 ## [0.5.8] - 2026-01-06
 
