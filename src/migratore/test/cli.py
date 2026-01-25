@@ -168,8 +168,7 @@ class CLITest(unittest.TestCase):
         temp_dir = tempfile.mkdtemp()
         try:
             old_timestamp = 1391804600
-            migration_content = (
-                """#!/usr/bin/python
+            migration_content = """#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 class Migration:
@@ -182,9 +181,7 @@ class Migration:
         pass
 
 migration = Migration()
-"""
-                % old_timestamp
-            )
+""" % old_timestamp
 
             old_path = os.path.join(temp_dir, "%d.py" % old_timestamp)
             with open(old_path, "wb") as file:
