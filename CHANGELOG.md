@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* `force` parameter on `Migration.rollback` (defaults to `False`) so subclasses can distinguish a recovery rollback (during a failed run) from an explicit downgrade
 
 ### Changed
 
 * Aligned the description column in the `help` command output so all command descriptions start at the same column
+* `Migration.start` and `Migration._start` now forward `*args, **kwargs` to the invoked operation so callers can pass extra parameters such as `force`
+* `Loader.downgrade` now invokes `start(operation="rollback", force=True)` to signal an explicit rollback
+* `Migration._start` no longer invokes `self.rollback` when the failing operation is itself `rollback`, preventing recursive rollback calls
 
 ### Fixed
 

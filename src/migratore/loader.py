@@ -67,7 +67,7 @@ class Loader(object):
         last = self.get_last_migration()
         if not last.has_rollback():
             raise RuntimeError("Migration '%s' does not implement rollback" % last.uuid)
-        last.start(operation="rollback")
+        last.start(operation="rollback", force=True)
 
     def dry_downgrade(self, *args, **kwargs):
         last = self.get_last_migration()

@@ -345,10 +345,10 @@ class Migration(base.Console):
 
         base.Migratore.echo("Error       :  %s" % error)
 
-    def start(self, operation="run", operator="Administrator"):
+    def start(self, operation="run", operator="Administrator", *args, **kwargs):
         db = base.Migratore.get_db()
         try:
-            return self._start(db, operation, operator)
+            return self._start(db, operation, operator, *args, **kwargs)
         finally:
             db.close()
 
@@ -370,11 +370,11 @@ class Migration(base.Console):
     def cleanup(self, db):
         self.echo("Cleaning up...")
 
-    def rollback(self, db):
-        self.echo("Rolling back operation...")
+    def rollback(self, db, force=False):
+        self.echo("Rolling back operation (force=%s)..." % force)
         db.rollback()
 
-    def _start(self, db, operation, operator):
+    def _start(self, db, operation, operator, *args, **kwargs):
         cls = self.__class__
 
         result = "success"
@@ -384,12 +384,12 @@ class Migration(base.Console):
 
         method = getattr(self, operation)
         try:
-            method(db)
+            method(db, *args, **kwargs)
         except Exception as exception:
             if db.safe:
                 db.rollback()
-            else:
-                self.rollback(db)
+            elif not operation == "rollback":
+                self.rollback(db, *args, **kwargs)
             lines = traceback.format_exc().splitlines()
             lines_s = "\n".join(lines)
             result = "error"

@@ -71,7 +71,7 @@ class LoaderTest(unittest.TestCase):
             self.skipTest("Skipping test: mock unavailable")
 
         class MigrationWithRollback(migratore.Migration):
-            def rollback(self, db):
+            def rollback(self, db, force=False):
                 pass
 
         loader = migratore.Loader()
@@ -81,7 +81,7 @@ class LoaderTest(unittest.TestCase):
             with mock.patch.object(target, "start") as mock_start:
                 loader.downgrade()
 
-        mock_start.assert_called_once_with(operation="rollback")
+        mock_start.assert_called_once_with(operation="rollback", force=True)
 
     def test_downgrade_raises_when_rollback_not_implemented(self):
         if mock == None:

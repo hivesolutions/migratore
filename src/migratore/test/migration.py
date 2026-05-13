@@ -23,7 +23,7 @@ class MigrationTest(unittest.TestCase):
 
     def test_has_rollback_override(self):
         class MigrationWithRollback(migratore.Migration):
-            def rollback(self, db):
+            def rollback(self, db, force=False):
                 pass
 
         class MigrationWithoutRollback(migratore.Migration):
@@ -79,7 +79,7 @@ class MigrationTest(unittest.TestCase):
             def run(self, db):
                 raise RuntimeError("Test exception")
 
-            def rollback(self, db):
+            def rollback(self, db, force=False):
                 self.rollback_called = True
                 migratore.Migration.rollback(self, db)
 
