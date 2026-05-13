@@ -18,6 +18,21 @@ class MigrationTest(unittest.TestCase):
         migrations.sort()
         self.assertEqual(migrations, [migration_b, migration_a])
 
+    def test_has_rollback_base(self):
+        self.assertEqual(migratore.Migration.has_rollback(), False)
+
+    def test_has_rollback_override(self):
+        class MigrationWithRollback(migratore.Migration):
+            def rollback(self, db):
+                pass
+
+        class MigrationWithoutRollback(migratore.Migration):
+            def run(self, db):
+                pass
+
+        self.assertEqual(MigrationWithRollback.has_rollback(), True)
+        self.assertEqual(MigrationWithoutRollback.has_rollback(), False)
+
     def test_safe_rollback(self):
         """
         Tests that `SAFE` config variable controls the rollback

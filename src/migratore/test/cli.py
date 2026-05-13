@@ -111,6 +111,8 @@ class CLITest(unittest.TestCase):
             self.assertIn("touch", output)
             self.assertIn("upgrade", output)
             self.assertIn("dry_upgrade", output)
+            self.assertIn("downgrade", output)
+            self.assertIn("dry_downgrade", output)
             self.assertIn("skip", output)
             self.assertIn("generate", output)
 
