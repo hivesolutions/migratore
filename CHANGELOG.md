@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Updated `README.md` with the new `downgrade` and `dry_downgrade` commands and a new `Operations` section documenting the `Run`, `Run Partial`, `Run Skip` and `Rollback` semantics
 
 ### Fixed
 

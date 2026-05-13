@@ -40,8 +40,21 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `squash [start] [end] <output>` - Combines multiple migrations into a single file
 * `upgrade [path]` - Executes the pending migrations using the defined directory or current
 * `dry_upgrade [path]` - Prints the pending migrations without executing them
+* `downgrade [path]` - Rolls back the last applied migration using the defined directory or current
+* `dry_downgrade [path]` - Prints the last applied migration without rolling it back
 * `skip [path]` - Skips the current migration (next to be run) using the defined directory or current
 * `generate [path]` - Generates a new migration file into the target path
+
+## Operations
+
+Every command that touches a migration records a row in the `migratore` bookkeeping table with an `operation` value that describes what was done. The same migration can have multiple rows over time (e.g. a `Run` followed later by a `Rollback`). The most recent row for each UUID is what determines whether the migration is currently applied.
+
+* `Run` - Normal application of a migration through `upgrade`. Invokes `Migration.run`.
+* `Run Partial` - Re-execution of a single migration through `rebuild [id]`. Invokes `Migration.run_partial`, useful for resuming a migration that previously failed mid-way.
+* `Run Skip` - Records the migration as applied through `skip` without executing its `run` body. Invokes `Migration.run_skip`. Handy when adopting `migratore` on a database that already has the target schema, or when a migration has been applied out-of-band.
+* `Rollback` - Explicit downgrade through `downgrade`, or recovery rollback automatically triggered when a `run` fails (when `SAFE` is `False`). Invokes `Migration.rollback`. The `force` argument distinguishes the two cases: `True` for an explicit downgrade, `False` for recovery.
+
+A migration is considered **currently applied** whenever the most recent successful row for its UUID is anything other than `Rollback`. This means a migration that was rolled back via `downgrade` becomes pending again and will be re-applied by the next `upgrade`.
 
 ## Examples
 
