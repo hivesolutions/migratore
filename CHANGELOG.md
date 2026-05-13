@@ -13,12 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* `Loader.upgrade`, `Loader.dry_upgrade` and `Loader.get_current_migration` now use a backwards scan to find the last applied migration and process everything after it, restoring the cursor semantics of the original timestamp-based logic and reducing the number of `is_applied` lookups
-* Extracted the cursor lookup into a new `Loader._first_pending_index` helper
+*
 
 ### Fixed
 
 *
+
+## [0.9.2] - 2026-05-13
+
+### Changed
+
+* `Loader.upgrade`, `Loader.dry_upgrade` and `Loader.get_current_migration` now use a backwards scan to find the last applied migration and process everything after it, restoring the cursor semantics of the original timestamp-based logic and reducing the number of `is_applied` lookups
+* Extracted the cursor lookup into a new `Loader._first_pending_index` helper
 
 ## [0.9.1] - 2026-05-13
 
