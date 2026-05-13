@@ -71,6 +71,16 @@ class Loader(object):
         finally:
             db.close()
 
+    def downgrade(self, *args, **kwargs):
+        last = self.get_last_migration()
+        if not last.has_rollback():
+            raise RuntimeError("Migration '%s' does not implement rollback" % last.uuid)
+        last.start(operation="rollback")
+
+    def dry_downgrade(self, *args, **kwargs):
+        last = self.get_last_migration()
+        print(last)
+
     def rebuild(self, id, *args, **kwargs):
         self.load()
         migration = self.migrations_m[id]
@@ -119,6 +129,19 @@ class Loader(object):
             db.close()
 
         raise RuntimeError("No current migration found")
+
+    def get_last_migration(self):
+        migrations = self.load()
+
+        db = base.Migratore.get_db()
+        try:
+            for migration in reversed(migrations):
+                if db.exist_uuid(migration.uuid):
+                    return migration
+        finally:
+            db.close()
+
+        raise RuntimeError("No applied migration found")
 
     def get_migration(self, timestamp):
         migrations = self.load()

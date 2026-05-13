@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* New `downgrade` command that runs the `rollback` of the last applied migration, raising an error if `rollback` is not implemented
+* New `dry_downgrade` command that prints the last applied migration without rolling it back
 
 ### Changed
 

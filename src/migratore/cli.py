@@ -36,6 +36,12 @@ def run_help():
         "  dry_upgrade [path]  Prints the pending migrations without executing them using the defined directory or current"
     )
     print(
+        "  downgrade [path]  Rolls back the last applied migration using the defined directory or current"
+    )
+    print(
+        "  dry_downgrade [path]  Prints the last applied migration without rolling it back using the defined directory or current"
+    )
+    print(
         "  skip [path]     Skips the current migration (next to be run) using the defined directory or current"
     )
     print("  generate [path] Generates a new migration file into the target path")
@@ -87,6 +93,14 @@ def run_dry_upgrade(path=None):
 
 def run_skip(path=None):
     migration.Migration.skip(path=path)
+
+
+def run_downgrade(path=None):
+    migration.Migration.downgrade(path=path)
+
+
+def run_dry_downgrade(path=None):
+    migration.Migration.dry_downgrade(path=path)
 
 
 def run_generate(path=None):

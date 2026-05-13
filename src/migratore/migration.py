@@ -13,7 +13,6 @@ from . import loader
 
 
 class Migration(base.Console):
-
     SQUASHABLE_METHODS = ["run", "run_partial", "run_skip", "cleanup", "rollback"]
     """ Methods that can be squashed into a single migration """
 
@@ -146,6 +145,20 @@ class Migration(base.Console):
         path = os.path.abspath(path)
         _loader = loader.DirectoryLoader(path)
         _loader.dry_upgrade(*args, **kwargs)
+
+    @classmethod
+    def downgrade(cls, path=None, *args, **kwargs):
+        path = path or "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.downgrade(*args, **kwargs)
+
+    @classmethod
+    def dry_downgrade(cls, path=None, *args, **kwargs):
+        path = path or "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.dry_downgrade(*args, **kwargs)
 
     @classmethod
     def skip(cls, path=None, *args, **kwargs):
@@ -287,6 +300,14 @@ class Migration(base.Console):
         contents = contents.decode(encoding)
         result = contents % args
         return result.encode(encoding)
+
+    @classmethod
+    def has_rollback(cls):
+        base_rollback = Migration.rollback
+        target_rollback = cls.rollback
+        base_func = getattr(base_rollback, "__func__", base_rollback)
+        target_func = getattr(target_rollback, "__func__", target_rollback)
+        return target_func is not base_func
 
     @classmethod
     def _time_s(cls, timestamp):
