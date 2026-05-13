@@ -367,12 +367,14 @@ class Migration(base.Console):
         if self.description:
             self.echo("%s" % self.description)
 
+    def rollback(self, db, force=False):
+        self.echo("Rolling back migration '%s' (force=%s)..." % (self.uuid, force))
+        if self.description:
+            self.echo("%s" % self.description)
+        db.rollback()
+
     def cleanup(self, db):
         self.echo("Cleaning up...")
-
-    def rollback(self, db, force=False):
-        self.echo("Rolling back operation (force=%s)..." % force)
-        db.rollback()
 
     def _start(self, db, operation, operator, *args, **kwargs):
         cls = self.__class__
