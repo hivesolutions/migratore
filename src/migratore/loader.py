@@ -42,9 +42,8 @@ class Loader(object):
 
         db = base.Migratore.get_db(*args, **kwargs)
         try:
-            for migration in migrations:
-                if db.is_applied(migration.uuid):
-                    continue
+            start = self._first_pending_index(db, migrations)
+            for migration in migrations[start:]:
                 result = migration.start()
                 if not result == "success":
                     break
@@ -56,9 +55,8 @@ class Loader(object):
 
         db = base.Migratore.get_db(*args, **kwargs)
         try:
-            for migration in migrations:
-                if db.is_applied(migration.uuid):
-                    continue
+            start = self._first_pending_index(db, migrations)
+            for migration in migrations[start:]:
                 print(migration)
         finally:
             db.close()
@@ -110,9 +108,9 @@ class Loader(object):
 
         db = base.Migratore.get_db()
         try:
-            for migration in migrations:
-                if not db.is_applied(migration.uuid):
-                    return migration
+            start = self._first_pending_index(db, migrations)
+            if start < len(migrations):
+                return migrations[start]
         finally:
             db.close()
 
@@ -185,6 +183,12 @@ class Loader(object):
                 result.append(migration)
 
         return result
+
+    def _first_pending_index(self, db, migrations):
+        for index in range(len(migrations) - 1, -1, -1):
+            if db.is_applied(migrations[index].uuid):
+                return index + 1
+        return 0
 
     def _matches_identifier(self, migration, identifier):
         try:
