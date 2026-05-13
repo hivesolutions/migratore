@@ -10,41 +10,47 @@ from . import migration
 def run_help():
     print("%s %s (%s)" % (info.NAME, info.VERSION, info.AUTHOR))
     print("")
-    print("  version         Prints the current version of migratore")
-    print("  environ         Displays the current environment in the standard output")
-    print("  list            Lists the executed migrations on the current database")
-    print("  errors          Lists the various errors from migration of the database")
+    print("  version               Prints the current version of migratore")
     print(
-        "  mark            Marks the associated data source with the current timestamp"
+        "  environ               Displays the current environment in the standard output"
     )
     print(
-        "  trace [id]      Prints the traceback for the error execution with the provided id"
+        "  list                  Lists the executed migrations on the current database"
     )
     print(
-        "  rebuild [id]    Run the partial execution of the migration with the given id"
+        "  errors                Lists the various errors from migration of the database"
     )
     print(
-        "  touch [id]      Touches a migration updating its timestamp to current time"
+        "  mark                  Marks the associated data source with the current timestamp"
+    )
+    print(
+        "  trace [id]            Prints the traceback for the error execution with the provided id"
+    )
+    print(
+        "  rebuild [id]          Run the partial execution of the migration with the given id"
+    )
+    print(
+        "  touch [id]            Touches a migration updating its timestamp to current time"
     )
     print(
         "  squash [start] [end] <output>  Combines multiple migrations into a single file"
     )
     print(
-        "  upgrade [path]  Executes the pending migrations using the defined directory or current"
+        "  upgrade [path]        Executes the pending migrations using the defined directory or current"
     )
     print(
-        "  dry_upgrade [path]  Prints the pending migrations without executing them using the defined directory or current"
+        "  dry_upgrade [path]    Prints the pending migrations without executing them using the defined directory or current"
     )
     print(
-        "  downgrade [path]  Rolls back the last applied migration using the defined directory or current"
+        "  downgrade [path]      Rolls back the last applied migration using the defined directory or current"
     )
     print(
         "  dry_downgrade [path]  Prints the last applied migration without rolling it back using the defined directory or current"
     )
     print(
-        "  skip [path]     Skips the current migration (next to be run) using the defined directory or current"
+        "  skip [path]           Skips the current migration (next to be run) using the defined directory or current"
     )
-    print("  generate [path] Generates a new migration file into the target path")
+    print("  generate [path]       Generates a new migration file into the target path")
 
 
 def run_version():

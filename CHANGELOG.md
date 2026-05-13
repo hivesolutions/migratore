@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Aligned the description column in the `help` command output so all command descriptions start at the same column
 
 ### Fixed
 
