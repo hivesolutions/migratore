@@ -460,15 +460,37 @@ class Database(Console):
 
     def timestamp(self):
         table = self.get_table("migratore")
-        timestamp = table.get(
-            "timestamp", order_by=(("timestamp", "desc"),), result="success"
+        rows = table.select(
+            where="result = 'success'", order_by=(("object_id", "desc"),)
         )
-        return timestamp
+        seen = set()
+        max_ts = None
+        for row in rows:
+            uuid = row["uuid"]
+            if uuid in seen:
+                continue
+            seen.add(uuid)
+            if row["operation"] == "Rollback":
+                continue
+            ts = row["timestamp"]
+            if max_ts == None or ts > max_ts:
+                max_ts = ts
+        return max_ts
 
     def exist_uuid(self, uuid, result="success"):
         table = self.get_table("migratore")
         result = table.get(where="uuid = '%s' and result = '%s'" % (uuid, result))
         return bool(result)
+
+    def is_applied(self, uuid):
+        table = self.get_table("migratore")
+        row = table.get(
+            where="uuid = '%s' and result = 'success'" % uuid,
+            order_by=(("object_id", "desc"),),
+        )
+        if not row:
+            return False
+        return not row["operation"] == "Rollback"
 
     def ensure_system(self):
         exists = self.exists_table("migratore")

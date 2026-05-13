@@ -9,11 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* New `is_applied` method in `Database` class that returns `True` only when the most recent successful entry for a migration UUID is not a `Rollback`
 
 ### Changed
 
-*
+* Loader operations (`upgrade`, `dry_upgrade`, `get_current_migration`, `get_last_migration`) now use `is_applied` instead of `exist_uuid` so migrations that were rolled back can be re-applied
+* Dropped the `migration.timestamp > db.timestamp()` filter in loader operations in favor of the precise `is_applied` check
+* `Database.timestamp` is now rollback-aware: returns the timestamp of the most recently applied migration whose latest operation is not a `Rollback`
 
 ### Fixed
 

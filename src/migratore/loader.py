@@ -42,12 +42,8 @@ class Loader(object):
 
         db = base.Migratore.get_db(*args, **kwargs)
         try:
-            timestamp = db.timestamp()
-            timestamp = timestamp or 0
             for migration in migrations:
-                is_valid = migration.timestamp > timestamp
-                is_valid = is_valid and not db.exist_uuid(migration.uuid)
-                if not is_valid:
+                if db.is_applied(migration.uuid):
                     continue
                 result = migration.start()
                 if not result == "success":
@@ -60,12 +56,8 @@ class Loader(object):
 
         db = base.Migratore.get_db(*args, **kwargs)
         try:
-            timestamp = db.timestamp()
-            timestamp = timestamp or 0
             for migration in migrations:
-                is_valid = migration.timestamp > timestamp
-                is_valid = is_valid and not db.exist_uuid(migration.uuid)
-                if not is_valid:
+                if db.is_applied(migration.uuid):
                     continue
                 print(migration)
         finally:
@@ -118,12 +110,8 @@ class Loader(object):
 
         db = base.Migratore.get_db()
         try:
-            timestamp = db.timestamp()
-            timestamp = timestamp or 0
             for migration in migrations:
-                is_valid = migration.timestamp > timestamp
-                is_valid = is_valid and not db.exist_uuid(migration.uuid)
-                if is_valid:
+                if not db.is_applied(migration.uuid):
                     return migration
         finally:
             db.close()
@@ -136,7 +124,7 @@ class Loader(object):
         db = base.Migratore.get_db()
         try:
             for migration in reversed(migrations):
-                if db.exist_uuid(migration.uuid):
+                if db.is_applied(migration.uuid):
                     return migration
         finally:
             db.close()

@@ -25,6 +25,11 @@ class FakeDatabase(object):
             return self.uuid_results.get(uuid) == result
         return uuid in self.existing_uuids
 
+    def is_applied(self, uuid):
+        if self.uuid_results:
+            return self.uuid_results.get(uuid) == "success"
+        return uuid in self.existing_uuids
+
     def close(self):
         pass
 
@@ -33,9 +38,16 @@ class FakeTable(object):
     def __init__(self, records=None):
         self.records = records
 
-    def get(self, where=None):
+    def get(self, where=None, **kwargs):
         if self.records == None:
             return None
+        if callable(self.records):
+            return self.records(where)
+        return self.records
+
+    def select(self, fnames=None, where=None, **kwargs):
+        if self.records == None:
+            return []
         if callable(self.records):
             return self.records(where)
         return self.records

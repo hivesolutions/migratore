@@ -224,3 +224,80 @@ class BaseMocksTest(unittest.TestCase):
         with mock.patch.object(db, "get_table", return_value=FakeTable(records=None)):
             result = db.exist_uuid("any-uuid")
             self.assertEqual(result, False)
+
+    def test_is_applied_returns_false_for_nonexistent(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+
+        with mock.patch.object(db, "get_table", return_value=FakeTable(records=None)):
+            result = db.is_applied("any-uuid")
+            self.assertEqual(result, False)
+
+    def test_is_applied_returns_true_for_run(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+
+        with mock.patch.object(
+            db,
+            "get_table",
+            return_value=FakeTable(records={"operation": "Run"}),
+        ):
+            result = db.is_applied("test-uuid")
+            self.assertEqual(result, True)
+
+    def test_is_applied_returns_false_for_rollback(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+
+        with mock.patch.object(
+            db,
+            "get_table",
+            return_value=FakeTable(records={"operation": "Rollback"}),
+        ):
+            result = db.is_applied("test-uuid")
+            self.assertEqual(result, False)
+
+    def test_timestamp_returns_none_when_no_rows(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+
+        with mock.patch.object(db, "get_table", return_value=FakeTable(records=[])):
+            result = db.timestamp()
+            self.assertEqual(result, None)
+
+    def test_timestamp_returns_latest_for_run(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+        rows = [
+            {"uuid": "uuid-2", "operation": "Run", "timestamp": 2000},
+            {"uuid": "uuid-1", "operation": "Run", "timestamp": 1000},
+        ]
+
+        with mock.patch.object(db, "get_table", return_value=FakeTable(records=rows)):
+            result = db.timestamp()
+            self.assertEqual(result, 2000)
+
+    def test_timestamp_ignores_rolled_back_migrations(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        db = migratore.Database()
+        rows = [
+            {"uuid": "uuid-2", "operation": "Rollback", "timestamp": 2000},
+            {"uuid": "uuid-2", "operation": "Run", "timestamp": 2000},
+            {"uuid": "uuid-1", "operation": "Run", "timestamp": 1000},
+        ]
+
+        with mock.patch.object(db, "get_table", return_value=FakeTable(records=rows)):
+            result = db.timestamp()
+            self.assertEqual(result, 1000)
