@@ -13,12 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* `Migration.rollback` now echoes the migration UUID and description (matching the `run` / `run_partial` / `run_skip` output style)
-* Reordered `Migration.rollback` ahead of `Migration.cleanup` to group it with the other operation methods
+*
 
 ### Fixed
 
 *
+
+## [0.9.1] - 2026-05-13
+
+### Changed
+
+* `Migration.rollback` now echoes the migration UUID and description (matching the `run` / `run_partial` / `run_skip` output style)
+* Reordered `Migration.rollback` ahead of `Migration.cleanup` to group it with the other operation methods
 
 ## [0.9.0] - 2026-05-13
 
