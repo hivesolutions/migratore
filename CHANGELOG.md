@@ -9,22 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* New `Loader.mark` method that records a `Run Skip` row for every pending migration found in the loader directory
+*
 
 ### Changed
 
-* `Migration.mark` now accepts an optional `path` argument and delegates to `DirectoryLoader.mark`, marking every on-disk migration as applied so that subsequent `upgrade` calls correctly skip them under the rollback-aware `is_applied` model
-* CLI `run_mark` now accepts an optional path argument, matching `run_upgrade` and `run_skip`
-* Updated `README.md` with the new `downgrade` and `dry_downgrade` commands and a new `Operations` section documenting the `Run`, `Run Partial`, `Run Skip` and `Rollback` semantics
-* Updated `README.md` and the `help` command output to reflect the new `mark [path]` signature
-
-### Removed
-
-* Obsolete `MarkMigration` class, replaced by the per-migration `Run Skip` recording in `Loader.mark`
+*
 
 ### Fixed
 
-* `mark` no longer leaves the bookkeeping table in a state that causes the next `upgrade` to re-run every on-disk migration
+*
+
+## [0.10.0] - 2026-05-28
+
+### Added
+
+* `mark` now records every pending migration in the target directory as skipped in a single run
+
+### Changed
+
+* `mark` accepts an optional path argument, matching `upgrade` and `skip`
+* Documented the new `downgrade` and `dry_downgrade` commands and the migration operation semantics
+
+### Fixed
+
+* `mark` no longer leaves the database in a state that causes the next `upgrade` to re-run every migration
 
 ## [0.9.2] - 2026-05-13
 
