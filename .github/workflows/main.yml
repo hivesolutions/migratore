@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     container: python:${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: |
           apt-get update && apt-get install -y mariadb-server
           mkdir -p /var/run/mysqld && chown -R mysql:mysql /var/run/mysqld
