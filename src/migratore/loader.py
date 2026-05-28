@@ -61,6 +61,17 @@ class Loader(object):
         finally:
             db.close()
 
+    def mark(self, *args, **kwargs):
+        migrations = self.load()
+
+        db = base.Migratore.get_db(*args, **kwargs)
+        try:
+            start = self._first_pending_index(db, migrations)
+            for migration in migrations[start:]:
+                migration.start(operation="run_skip")
+        finally:
+            db.close()
+
     def downgrade(self, *args, **kwargs):
         last = self.get_last_migration()
         if not last.has_rollback():

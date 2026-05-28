@@ -92,12 +92,11 @@ class Migration(base.Console):
             db.close()
 
     @classmethod
-    def mark(cls, *args, **kwargs):
-        db = base.Migratore.get_db(*args, **kwargs)
-        timestamp = db.timestamp()
-        timestamp = timestamp or 0
-        migration = MarkMigration()
-        migration.start()
+    def mark(cls, path=None, *args, **kwargs):
+        path = path or "."
+        path = os.path.abspath(path)
+        _loader = loader.DirectoryLoader(path)
+        _loader.mark(*args, **kwargs)
 
     @classmethod
     def trace(cls, id):
@@ -550,19 +549,3 @@ class Migration(base.Console):
         lines.append("")
 
         return "\n".join(lines)
-
-
-class MarkMigration(Migration):
-    def __init__(self):
-        Migration.__init__(self)
-        self.uuid = "da023aab-736d-40a6-8e9b-c6175c1241f5"
-        self.timestamp = int(time.time())
-        self.description = "marks the initial stage of the data source"
-
-    def start(cls, *args, **kwargs):
-        db = base.Migratore.get_db()
-        table = db.get_table("migratore")
-        count = table.count(result="success")
-        if count > 0:
-            return
-        return Migration.start(cls, *args, **kwargs)

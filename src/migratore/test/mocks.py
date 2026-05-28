@@ -6,9 +6,13 @@ class FakeMigration(object):
     def __init__(self, uuid, timestamp):
         self.uuid = uuid
         self.timestamp = timestamp
+        self.started_operation = None
 
     def __str__(self):
         return "Migration(%s, %d)" % (self.uuid, self.timestamp)
+
+    def start(self, operation="run", *args, **kwargs):
+        self.started_operation = operation
 
 
 class FakeDatabase(object):

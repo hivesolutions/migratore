@@ -33,7 +33,7 @@ HOST=${HOST} DB=${DB_NAME} USERNAME=${DB_USER} PASSWORD=${DB_PASS} migratore upg
 * `environ` - Displays the current environment in the standard output
 * `list` - Lists the executed migrations on the current database
 * `errors` - Lists the various errors from migration of the database
-* `mark` - Marks the associated data source with the current timestamp
+* `mark [path]` - Marks all pending migrations as applied using the defined directory or current
 * `trace [id]` - Prints the traceback for the error execution with the provided id
 * `rebuild [id]` - Run the partial execution of the migration with the given id
 * `touch [id]` - Touches a migration file updating its timestamp to the current time

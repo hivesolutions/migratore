@@ -21,7 +21,7 @@ def run_help():
         "  errors                Lists the various errors from migration of the database"
     )
     print(
-        "  mark                  Marks the associated data source with the current timestamp"
+        "  mark [path]           Marks all pending migrations as applied using the defined directory or current"
     )
     print(
         "  trace [id]            Prints the traceback for the error execution with the provided id"
@@ -69,8 +69,8 @@ def run_errors():
     migration.Migration.errors()
 
 
-def run_mark():
-    migration.Migration.mark()
+def run_mark(path=None):
+    migration.Migration.mark(path=path)
 
 
 def run_trace(id):

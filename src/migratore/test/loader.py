@@ -89,6 +89,59 @@ class LoaderTest(unittest.TestCase):
         self.assertEqual(len(printed_migrations), 1)
         self.assertIn("Migration(uuid-1, 2000)", printed_migrations)
 
+    def test_mark_records_run_skip_for_each_pending(self):
+        migration1 = FakeMigration("uuid-1", 1000)
+        migration2 = FakeMigration("uuid-2", 2000)
+        migration3 = FakeMigration("uuid-3", 3000)
+
+        loader = migratore.Loader()
+        loader.migrations = [migration1, migration2, migration3]
+
+        fake_db = FakeDatabase(existing_uuids={"uuid-1"})
+        try:
+            migratore.base.Migratore._database = fake_db
+            loader.mark()
+        finally:
+            migratore.base.Migratore.invalidate()
+
+        self.assertEqual(migration1.started_operation, None)
+        self.assertEqual(migration2.started_operation, "run_skip")
+        self.assertEqual(migration3.started_operation, "run_skip")
+
+    def test_mark_records_run_skip_for_all_when_none_applied(self):
+        migration1 = FakeMigration("uuid-1", 1000)
+        migration2 = FakeMigration("uuid-2", 2000)
+
+        loader = migratore.Loader()
+        loader.migrations = [migration1, migration2]
+
+        fake_db = FakeDatabase()
+        try:
+            migratore.base.Migratore._database = fake_db
+            loader.mark()
+        finally:
+            migratore.base.Migratore.invalidate()
+
+        self.assertEqual(migration1.started_operation, "run_skip")
+        self.assertEqual(migration2.started_operation, "run_skip")
+
+    def test_mark_is_noop_when_all_applied(self):
+        migration1 = FakeMigration("uuid-1", 1000)
+        migration2 = FakeMigration("uuid-2", 2000)
+
+        loader = migratore.Loader()
+        loader.migrations = [migration1, migration2]
+
+        fake_db = FakeDatabase(existing_uuids={"uuid-1", "uuid-2"})
+        try:
+            migratore.base.Migratore._database = fake_db
+            loader.mark()
+        finally:
+            migratore.base.Migratore.invalidate()
+
+        self.assertEqual(migration1.started_operation, None)
+        self.assertEqual(migration2.started_operation, None)
+
     def test_downgrade_calls_rollback_when_implemented(self):
         if mock == None:
             self.skipTest("Skipping test: mock unavailable")
