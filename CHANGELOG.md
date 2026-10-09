@@ -9,11 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Check for the existence of the index of a column in a table
+*
 
 ### Changed
 
 *
+
+### Fixed
+
+*
+
+## [0.11.0] - 2026-10-09
+
+### Added
+
+* Check for the existence of the index of a column in a table
 
 ### Fixed
 
