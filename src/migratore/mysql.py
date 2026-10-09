@@ -75,7 +75,7 @@ class MySQLTable(base.Table):
         buffer.write(type)
         buffer.execute()
 
-    def drop_index(self, name):
+    def drop_index(self, name, type="hash"):
         index = "%s_%s_%s" % (self.name, name, type)
         index = index[-64:]
         buffer = self.owner._buffer()
@@ -84,6 +84,22 @@ class MySQLTable(base.Table):
         buffer.write(" on ")
         buffer.write(self.name)
         buffer.execute()
+
+    def has_index(self, name, type="hash"):
+        index = "%s_%s_%s" % (self.name, name, type)
+        index = index[-64:]
+        buffer = self.owner._buffer()
+        buffer.write("select count(*) ")
+        buffer.write("from information_schema.statistics where table_schema = '")
+        buffer.write(self.owner.name)
+        buffer.write("' and table_name = '")
+        buffer.write(self.name)
+        buffer.write("' and index_name = '")
+        buffer.write(index)
+        buffer.write("'")
+        counts = buffer.execute(fetch=True)
+        exists = True if counts and counts[0][0] > 0 else False
+        return exists
 
     def has_column(self, name):
         buffer = self.owner._buffer()

@@ -65,6 +65,85 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(type(result[0]["username_rename"]) in (int, legacy.LONG), True)
         self.assertEqual(type(result[0]["height"]) in (int, legacy.LONG), True)
 
+    def test_create_index(self):
+        db = migratore.Migratore.get_test()
+        table = db.create_table("users")
+        table.add_column("username", type="string")
+        table.create_index("username")
+        table.create_index("username", type="btree")
+
+        self.assertEqual(table.has_index("username"), True)
+        self.assertEqual(table.has_index("username", type="btree"), True)
+
+        with self.assertRaises(Exception):
+            table.create_index("username")
+
+        self.assertEqual(table.has_index("username"), True)
+
+    def test_drop_index(self):
+        db = migratore.Migratore.get_test()
+        table = db.create_table("users")
+        table.add_column("username", type="string", index=True)
+        table.add_column("email", type="string", index=True)
+        table.drop_index("username")
+
+        self.assertEqual(table.has_index("username"), False)
+        self.assertEqual(table.has_index("username", type="btree"), True)
+        self.assertEqual(table.has_index("email"), True)
+        self.assertEqual(table.has_index("email", type="btree"), True)
+
+        table.drop_index("username", type="btree")
+
+        self.assertEqual(table.has_index("username", type="btree"), False)
+        self.assertEqual(table.has_column("username"), True)
+
+        with self.assertRaises(Exception):
+            table.drop_index("username")
+
+        table.create_index("username")
+
+        self.assertEqual(table.has_index("username"), True)
+
+    def test_drop_index_long(self):
+        db = migratore.Migratore.get_test()
+        table = db.create_table("users")
+        name = "username_" + "a" * 51
+        table.add_column(name, type="string", index=True)
+
+        self.assertEqual(len("users_%s_hash" % name) > 64, True)
+        self.assertEqual(table.has_index(name), True)
+        self.assertEqual(table.has_index(name, type="btree"), True)
+
+        table.drop_index(name)
+
+        self.assertEqual(table.has_index(name), False)
+        self.assertEqual(table.has_index(name, type="btree"), True)
+
+    def test_has_index(self):
+        db = migratore.Migratore.get_test()
+        table = db.create_table("users")
+        table.add_column("username", type="string")
+        other = db.create_table("accounts")
+        other.add_column("username", type="string", index=True)
+
+        self.assertEqual(table.has_index("object_id"), True)
+        self.assertEqual(table.has_index("object_id", type="btree"), True)
+        self.assertEqual(table.has_index("username"), False)
+        self.assertEqual(table.has_index("username", type="btree"), False)
+        self.assertEqual(table.has_index("password"), False)
+        self.assertEqual(other.has_index("username"), True)
+        self.assertEqual(other.has_index("username", type="btree"), True)
+
+        table.create_index("username")
+
+        self.assertEqual(table.has_index("username"), True)
+        self.assertEqual(table.has_index("username", type="btree"), False)
+
+        table.add_foreign("account")
+
+        self.assertEqual(table.has_index("account"), True)
+        self.assertEqual(table.has_index("account", type="btree"), False)
+
     def test_environ_dot_env(self):
         if mock == None:
             self.skipTest("Skipping test: mock unavailable")
@@ -301,3 +380,13 @@ class BaseMocksTest(unittest.TestCase):
         with mock.patch.object(db, "get_table", return_value=FakeTable(records=rows)):
             result = db.timestamp()
             self.assertEqual(result, 1000)
+
+    def test_drop_index_ignored_for_base_table(self):
+        db = migratore.Database()
+        table = migratore.Table(db, "users")
+
+        result = table.drop_index("username")
+        self.assertEqual(result, None)
+
+        result = table.drop_index("username", type="btree")
+        self.assertEqual(result, None)

@@ -813,7 +813,7 @@ class Table(Console):
     def create_index(self, name, type="hash"):
         pass
 
-    def drop_index(self, name):
+    def drop_index(self, name, type="hash"):
         pass
 
     def run(self, callable, count, title=None):
