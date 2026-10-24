@@ -3,9 +3,10 @@
 
 
 class FakeMigration(object):
-    def __init__(self, uuid, timestamp):
+    def __init__(self, uuid, timestamp, result="success"):
         self.uuid = uuid
         self.timestamp = timestamp
+        self.result = result
         self.started_operation = None
 
     def __str__(self):
@@ -13,6 +14,7 @@ class FakeMigration(object):
 
     def start(self, operation="run", *args, **kwargs):
         self.started_operation = operation
+        return self.result
 
 
 class FakeDatabase(object):
@@ -20,6 +22,7 @@ class FakeDatabase(object):
         self.current_timestamp = current_timestamp
         self.existing_uuids = existing_uuids or set()
         self.uuid_results = uuid_results or {}
+        self.closed = False
 
     def timestamp(self):
         return self.current_timestamp
@@ -35,7 +38,7 @@ class FakeDatabase(object):
         return uuid in self.existing_uuids
 
     def close(self):
-        pass
+        self.closed = True
 
 
 class FakeTable(object):

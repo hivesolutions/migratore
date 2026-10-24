@@ -44,9 +44,7 @@ class Loader(object):
         try:
             start = self._first_pending_index(db, migrations)
             for migration in migrations[start:]:
-                result = migration.start()
-                if not result == "success":
-                    break
+                self._start_migration(migration)
         finally:
             db.close()
 
@@ -68,7 +66,7 @@ class Loader(object):
         try:
             start = self._first_pending_index(db, migrations)
             for migration in migrations[start:]:
-                migration.start(operation="run_skip")
+                self._start_migration(migration, operation="run_skip")
         finally:
             db.close()
 
@@ -76,7 +74,7 @@ class Loader(object):
         last = self.get_last_migration()
         if not last.has_rollback():
             raise RuntimeError("Migration '%s' does not implement rollback" % last.uuid)
-        last.start(operation="rollback", force=True)
+        self._start_migration(last, operation="rollback", force=True)
 
     def dry_downgrade(self, *args, **kwargs):
         last = self.get_last_migration()
@@ -84,10 +82,10 @@ class Loader(object):
 
     def rebuild(self, id, *args, **kwargs):
         self.load()
-        migration = self.migrations_m[id]
+        migration = self.migrations_m.get(id)
         if not migration:
             raise RuntimeError("Migration '%s' not found" % id)
-        migration.start(operation="run_partial")
+        self._start_migration(migration, operation="run_partial")
 
     def touch(self, id, *args, **kwargs):
         from . import migration
@@ -100,7 +98,7 @@ class Loader(object):
 
     def skip(self, *args, **kwargs):
         migration = self.get_current_migration()
-        migration.start(operation="run_skip")
+        self._start_migration(migration, operation="run_skip")
 
     def squash(self, start, end, output=None, *args, **kwargs):
         from . import migration
@@ -213,6 +211,11 @@ class Loader(object):
             return True
 
         return False
+
+    def _start_migration(self, migration, *args, **kwargs):
+        result = migration.start(*args, **kwargs)
+        if not result == "success":
+            raise RuntimeError("Migration '%s' failed" % migration.uuid)
 
 
 class DirectoryLoader(Loader):

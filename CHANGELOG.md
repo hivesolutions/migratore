@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Continuous integration pipeline of Python 3.6, whose Debian release is archived, installing the system packages from the Debian archive
+* `upgrade`, `mark`, `skip`, `rebuild` and `downgrade` no longer exit successfully when a migration fails, raising an error so that the caller (e.g. a container start script) can stop on it
+* `rebuild` raises the not found error for an unknown migration, instead of a `KeyError`
 
 ## [0.11.0] - 2026-10-09
 

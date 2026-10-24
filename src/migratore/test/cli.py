@@ -15,6 +15,8 @@ except ImportError:
 
 import migratore
 
+from .mocks import FakeDatabase
+
 
 class CLITest(unittest.TestCase):
     def test_command_resolution(self):
@@ -129,6 +131,53 @@ class CLITest(unittest.TestCase):
             output = str(mock_print.call_args)
             self.assertIn(info.NAME, output)
             self.assertIn(info.VERSION, output)
+
+    def test_upgrade_failed_migration_raises(self):
+        if mock == None:
+            self.skipTest("Skipping test: mock unavailable")
+
+        from migratore import cli
+
+        temp_dir = tempfile.mkdtemp()
+        try:
+            timestamp = 1391804700
+            migration_content = """#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+class Migration:
+    def __init__(self):
+        self.uuid = "failing-uuid"
+        self.timestamp = %d
+        self.description = "failing migration"
+
+    def start(self, operation="run", *args, **kwargs):
+        return "error"
+
+migration = Migration()
+""" % timestamp
+
+            path = os.path.join(temp_dir, "%d.py" % timestamp)
+            with open(path, "wb") as file:
+                file.write(migration_content.encode("utf-8"))
+
+            fake_db = FakeDatabase()
+            with mock.patch.object(
+                migratore.base.Migratore, "get_db", return_value=fake_db
+            ):
+                original_argv = sys.argv
+                try:
+                    sys.argv = ["migratore", "upgrade", temp_dir]
+                    with self.assertRaises(RuntimeError) as context:
+                        cli.main()
+                    self.assertIn(
+                        "Migration 'failing-uuid' failed", str(context.exception)
+                    )
+                finally:
+                    sys.argv = original_argv
+
+            self.assertEqual(fake_db.closed, True)
+        finally:
+            shutil.rmtree(temp_dir)
 
     def test_generate_creates_file(self):
         temp_dir = tempfile.mkdtemp()

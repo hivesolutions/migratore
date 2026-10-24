@@ -56,6 +56,8 @@ Every command that touches a migration records a row in the `migratore` bookkeep
 
 A migration is considered **currently applied** whenever the most recent successful row for its UUID is anything other than `Rollback`. This means a migration that was rolled back via `downgrade` becomes pending again and will be re-applied by the next `upgrade`.
 
+A migration operation that fails is recorded with an `error` result, and the command that started it (`upgrade`, `mark`, `skip`, `rebuild` or `downgrade`) stops on it without going through the migrations that follow and raises an error, so that the command exits with a non-zero code. A migration whose `run` fails stays pending and is retried by the next `upgrade`.
+
 ## Examples
 
 ```python
