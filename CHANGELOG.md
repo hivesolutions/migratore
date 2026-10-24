@@ -14,10 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Deployment of the package runs on Python 3.14
+* Continuous integration and deployment workflows with named steps, as in the other projects, the formatting checked on Python 3.14 and the runs of a branch cancelled by its newer pushes
 
 ### Fixed
 
-*
+* Continuous integration pipeline of Python 3.6, whose Debian release is archived, installing the system packages from the Debian archive
 
 ## [0.11.0] - 2026-10-09
 
